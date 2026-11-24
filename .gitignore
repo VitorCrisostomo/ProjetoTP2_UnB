@@ -1,0 +1,37 @@
+# Python
+_pycache_/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Bancos locais
+*.db
+*.sqlite
+*.sqlite3
+
+# Node.js / Next.js
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Sphinx
+backend/docs/build/
