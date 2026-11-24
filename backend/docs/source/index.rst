@@ -10,6 +10,8 @@ O backend utiliza Python, Flask e SQLite.
    :maxdepth: 2
    :caption: Conteúdo:
 
+   backend
+
 Índices e tabelas
 =================
 
