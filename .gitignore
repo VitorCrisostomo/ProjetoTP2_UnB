@@ -25,6 +25,7 @@ node_modules/
 out/
 coverage/
 *.tsbuildinfo
+frontend/docs/api/
 
 # Arquivos do sistema
 .DS_Store
