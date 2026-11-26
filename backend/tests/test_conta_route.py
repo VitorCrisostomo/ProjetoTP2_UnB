@@ -3,9 +3,10 @@
 from pathlib import Path
 
 import pytest
+from werkzeug.security import check_password_hash
 
 from app import create_app
-from app.db import init_db
+from app.db import get_db, init_db
 
 
 def test_cadastrar_conta_valida(tmp_path: Path) -> None:
@@ -117,3 +118,65 @@ def test_cadastrar_conta_dados_invalidos(
 
     dados = response.get_json()
     assert "erro" in dados
+
+
+def test_cadastrar_conta_sem_json(tmp_path: Path) -> None:
+    """Verifica a rejeição de uma requisição sem JSON."""
+    app = create_app(
+        {
+            "TESTING": True,
+            "DATABASE": str(tmp_path / "test.sqlite3"),
+        }
+    )
+
+    with app.app_context():
+        init_db()
+
+    client = app.test_client()
+
+    response = client.post("/contas")
+
+    assert response.status_code == 400
+    assert "erro" in response.get_json()
+
+
+def test_persistencia_conta_e_hash(tmp_path: Path) -> None:
+    """Verifica a persistência e o armazenamento seguro da senha."""
+    app = create_app(
+        {
+            "TESTING": True,
+            "DATABASE": str(tmp_path / "test.sqlite3"),
+        }
+    )
+
+    with app.app_context():
+        init_db()
+
+    client = app.test_client()
+
+    response = client.post(
+        "/contas",
+        json={
+            "nome": "Usuario Teste",
+            "email": "usuario@teste.com",
+            "senha": "Senha123",
+        },
+    )
+
+    assert response.status_code == 201
+
+    with app.app_context():
+        conta = (
+            get_db()
+            .execute(
+                "SELECT * FROM contas WHERE email = ?",
+                ("usuario@teste.com",),
+            )
+            .fetchone()
+        )
+
+        assert conta is not None
+        assert conta["id"] == response.get_json()["id"]
+        assert conta["nome"] == "Usuario Teste"
+        assert conta["senha_hash"] != "Senha123"
+        assert check_password_hash(conta["senha_hash"], "Senha123")
