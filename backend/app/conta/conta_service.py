@@ -3,10 +3,10 @@
 import re
 import sqlite3
 
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.conta.conta_model import Conta, DadosInvalidosError
-from app.conta.conta_repository import inserir_conta
+from app.conta.conta_repository import buscar_conta_por_email, inserir_conta
 
 
 def validar_dados(
@@ -48,3 +48,29 @@ def cadastrar_conta(
         email_validado,
         senha_hash,
     )
+
+
+def autenticar_conta(
+    conexao: sqlite3.Connection,
+    email: object,
+    senha: object,
+) -> Conta | None:
+    """Autentica uma conta utilizando e-mail e senha."""
+
+    if not isinstance(email, str) or not re.fullmatch(
+        r"[^@\s]+@[^@\s]+\.[^@\s]+", email
+    ):
+        raise DadosInvalidosError("E-mail inválido.")
+
+    if not isinstance(senha, str) or not senha.strip():
+        raise DadosInvalidosError("Senha inválida.")
+
+    conta = buscar_conta_por_email(conexao, email)
+
+    if conta is None:
+        return None
+
+    if not check_password_hash(conta.senha_hash, senha):
+        return None
+
+    return conta

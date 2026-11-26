@@ -48,3 +48,29 @@ def inserir_conta(
         email=email,
         senha_hash=senha_hash,
     )
+
+
+def buscar_conta_por_email(
+    conexao: sqlite3.Connection,
+    email: str,
+) -> Conta | None:
+    """Busca uma conta pelo e-mail cadastrado."""
+
+    registro = conexao.execute(
+        """
+        SELECT id, nome, email, senha_hash
+        FROM contas
+        WHERE email = ?
+        """,
+        (email,),
+    ).fetchone()
+
+    if registro is None:
+        return None
+
+    return Conta(
+        id=registro["id"],
+        nome=registro["nome"],
+        email=registro["email"],
+        senha_hash=registro["senha_hash"],
+    )
