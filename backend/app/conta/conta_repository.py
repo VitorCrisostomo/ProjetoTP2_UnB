@@ -2,7 +2,7 @@
 
 import sqlite3
 
-from app.conta.conta_model import Conta
+from app.conta.conta_model import Conta, EmailJaCadastradoError
 
 
 def criar_tabela_contas(conexao: sqlite3.Connection) -> None:
@@ -30,11 +30,15 @@ def inserir_conta(
         """
         INSERT INTO contas (nome, email, senha_hash)
         VALUES (?, ?, ?)
+        ON CONFLICT(email) DO NOTHING
         """,
         (nome, email, senha_hash),
     )
 
     conexao.commit()
+
+    if cursor.rowcount == 0:
+        raise EmailJaCadastradoError("E-mail já cadastrado.")
 
     assert cursor.lastrowid is not None
 

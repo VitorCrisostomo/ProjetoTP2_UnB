@@ -11,3 +11,7 @@ class Conta:
     nome: str
     email: str
     senha_hash: str
+
+
+class EmailJaCadastradoError(Exception):
+    """Indica que o e-mail informado já está cadastrado."""

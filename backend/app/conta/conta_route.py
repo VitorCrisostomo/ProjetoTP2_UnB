@@ -2,6 +2,7 @@
 
 from flask import Blueprint, Response, jsonify, request
 
+from app.conta.conta_model import EmailJaCadastradoError
 from app.conta.conta_service import cadastrar_conta
 from app.db import get_db
 
@@ -13,12 +14,15 @@ def criar_conta() -> tuple[Response, int]:
     """Recebe uma solicitação de cadastro de conta."""
     dados = request.get_json()
 
-    conta = cadastrar_conta(
-        get_db(),
-        dados["nome"],
-        dados["email"],
-        dados["senha"],
-    )
+    try:
+        conta = cadastrar_conta(
+            get_db(),
+            dados["nome"],
+            dados["email"],
+            dados["senha"],
+        )
+    except EmailJaCadastradoError:
+        return jsonify({"erro": "E-mail já cadastrado."}), 409
 
     return jsonify(
         {
