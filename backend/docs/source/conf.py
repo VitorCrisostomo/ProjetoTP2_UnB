@@ -26,7 +26,12 @@ extensions = [
 ]
 
 autodoc_typehints = "description"
+nitpick_ignore = [
+    ("py:class", "flask.app.Flask"),
+    ("py:class", "sqlite3.Connection"),
+]
 
+templates_path: list[str] = []
 exclude_patterns: list[str] = []
 
 language = "pt_BR"
@@ -35,3 +40,4 @@ language = "pt_BR"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "alabaster"
+html_static_path: list[str] = []
