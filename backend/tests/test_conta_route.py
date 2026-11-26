@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import pytest
+
 from app import create_app
 from app.db import init_db
 
@@ -74,3 +76,44 @@ def test_cadastrar_conta_email_duplicado(tmp_path: Path) -> None:
     )
 
     assert segunda_resposta.status_code == 409
+
+
+@pytest.mark.parametrize(
+    "dados_invalidos",
+    [
+        {"nome": "", "email": "usuario@teste.com", "senha": "Senha123"},
+        {"nome": "   ", "email": "usuario@teste.com", "senha": "Senha123"},
+        {"nome": "Usuario", "email": "emailinvalido", "senha": "Senha123"},
+        {"nome": "Usuario", "email": "", "senha": "Senha123"},
+        {"nome": "Usuario", "email": "usuario@teste.com", "senha": ""},
+        {"email": "usuario@teste.com", "senha": "Senha123"},
+        {"nome": "Usuario", "senha": "Senha123"},
+        {"nome": "Usuario", "email": "usuario@teste.com"},
+        {"nome": 123, "email": "usuario@teste.com", "senha": "Senha123"},
+        {"nome": "Usuario", "email": None, "senha": "Senha123"},
+        {"nome": "Usuario", "email": "usuario@teste.com", "senha": 123},
+    ],
+)
+def test_cadastrar_conta_dados_invalidos(
+    tmp_path: Path,
+    dados_invalidos: dict[str, object],
+) -> None:
+    """Verifica a rejeição de dados inválidos no cadastro."""
+    app = create_app(
+        {
+            "TESTING": True,
+            "DATABASE": str(tmp_path / "test.sqlite3"),
+        }
+    )
+
+    with app.app_context():
+        init_db()
+
+    client = app.test_client()
+
+    response = client.post("/contas", json=dados_invalidos)
+
+    assert response.status_code == 400
+
+    dados = response.get_json()
+    assert "erro" in dados
