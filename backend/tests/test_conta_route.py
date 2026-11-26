@@ -180,3 +180,43 @@ def test_persistencia_conta_e_hash(tmp_path: Path) -> None:
         assert conta["nome"] == "Usuario Teste"
         assert conta["senha_hash"] != "Senha123"
         assert check_password_hash(conta["senha_hash"], "Senha123")
+
+
+def test_login_credenciais_validas(tmp_path: Path) -> None:
+    """Verifica a autenticação com credenciais válidas."""
+    app = create_app(
+        {
+            "TESTING": True,
+            "DATABASE": str(tmp_path / "test.sqlite3"),
+            "SECRET_KEY": "chave-exclusiva-de-teste",
+        }
+    )
+
+    with app.app_context():
+        init_db()
+
+    client = app.test_client()
+
+    cadastro = client.post(
+        "/contas",
+        json={
+            "nome": "Usuario Teste",
+            "email": "usuario@teste.com",
+            "senha": "Senha123",
+        },
+    )
+
+    assert cadastro.status_code == 201
+
+    response = client.post(
+        "/login",
+        json={
+            "email": "usuario@teste.com",
+            "senha": "Senha123",
+        },
+    )
+
+    assert response.status_code == 200
+
+    with client.session_transaction() as sessao:
+        assert sessao["conta_id"] == cadastro.get_json()["id"]
