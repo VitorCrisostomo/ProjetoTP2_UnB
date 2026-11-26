@@ -37,3 +37,40 @@ def test_cadastrar_conta_valida(tmp_path: Path) -> None:
     assert "id" in dados
     assert "senha" not in dados
     assert "senha_hash" not in dados
+
+
+def test_cadastrar_conta_email_duplicado(tmp_path: Path) -> None:
+    """Verifica se o sistema impede o cadastro de e-mails duplicados."""
+    app = create_app(
+        {
+            "TESTING": True,
+            "DATABASE": str(tmp_path / "test.sqlite3"),
+        }
+    )
+
+    with app.app_context():
+        init_db()
+
+    client = app.test_client()
+
+    primeira_resposta = client.post(
+        "/contas",
+        json={
+            "nome": "Primeiro Usuario",
+            "email": "usuario@teste.com",
+            "senha": "Senha123",
+        },
+    )
+
+    assert primeira_resposta.status_code == 201
+
+    segunda_resposta = client.post(
+        "/contas",
+        json={
+            "nome": "Segundo Usuario",
+            "email": "usuario@teste.com",
+            "senha": "OutraSenha123",
+        },
+    )
+
+    assert segunda_resposta.status_code == 409
