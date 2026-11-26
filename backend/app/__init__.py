@@ -6,6 +6,7 @@ from typing import Any
 from flask import Flask
 
 from app import db
+from app.conta.conta_route import conta_bp
 
 
 def create_app(test_config: dict[str, Any] | None = None) -> Flask:
@@ -16,6 +17,7 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
         app.config.update(test_config)
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
     db.init_app(app)
+    app.register_blueprint(conta_bp)
 
     @app.get("/health")
     def health() -> dict[str, str]:

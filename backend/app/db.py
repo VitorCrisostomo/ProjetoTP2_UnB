@@ -7,6 +7,8 @@ import click
 from flask import Flask, current_app, g
 from flask.cli import with_appcontext
 
+from app.conta.conta_repository import criar_tabela_contas
+
 
 def get_db() -> sqlite3.Connection:
     """Obtém a conexão do contexto atual, habilitando chaves estrangeiras."""
@@ -26,8 +28,10 @@ def close_db(exception: BaseException | None = None) -> None:
 
 
 def init_db() -> None:
-    """Cria o arquivo SQLite sem apagar dados ou presumir o modelo de domínio."""
-    get_db().commit()
+    """Inicializa o banco de dados sem apagar registros existentes."""
+    conexao = get_db()
+    criar_tabela_contas(conexao)
+    conexao.commit()
 
 
 @click.command("init-db")
