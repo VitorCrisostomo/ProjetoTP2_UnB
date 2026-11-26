@@ -15,3 +15,7 @@ class Conta:
 
 class EmailJaCadastradoError(Exception):
     """Indica que o e-mail informado já está cadastrado."""
+
+
+class DadosInvalidosError(Exception):
+    """Indica que os dados fornecidos são inválidos."""
