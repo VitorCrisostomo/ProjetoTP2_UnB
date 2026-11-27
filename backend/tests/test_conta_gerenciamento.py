@@ -105,3 +105,20 @@ def test_editar_conta_sem_login_retorna_401(client: FlaskClient) -> None:
 
     assert response.status_code == 401
     assert response.get_json() == {"erro": "Não autenticado."}
+
+
+def test_editar_conta_sem_confirmacao_mantem_os_dados(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04 C2: sem confirmação, os dados anteriores são mantidos."""
+    response = client.put(
+        "/conta",
+        json={"nome": "Nome Novo", "email": "novo@teste.com"},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == {"atualizada": False}
+    consulta = client.get("/conta").get_json()
+    assert consulta["nome"] == conta_logada["nome"]
+    assert consulta["email"] == conta_logada["email"]
