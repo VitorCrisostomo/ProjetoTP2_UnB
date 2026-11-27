@@ -196,3 +196,26 @@ def test_editar_conta_com_email_de_outra_conta_retorna_409(
     assert response.status_code == 409
     assert response.get_json() == {"erro": "E-mail já cadastrado."}
     assert client.get("/conta").get_json()["email"] == conta_logada["email"]
+
+
+def test_editar_conta_valida_atualiza_e_persiste_os_dados(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04 C5: dados válidos confirmados atualizam o cadastro."""
+    id_conta = client.get("/conta").get_json()["id"]
+
+    response = client.put(
+        "/conta",
+        json={"nome": "Nome Novo", "email": "novo@teste.com", "confirmar": True},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == {
+        "id": id_conta,
+        "nome": "Nome Novo",
+        "email": "novo@teste.com",
+    }
+    consulta = client.get("/conta").get_json()
+    assert consulta["nome"] == "Nome Novo"
+    assert consulta["email"] == "novo@teste.com"
