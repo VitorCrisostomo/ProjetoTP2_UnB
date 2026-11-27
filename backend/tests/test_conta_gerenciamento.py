@@ -219,3 +219,21 @@ def test_editar_conta_valida_atualiza_e_persiste_os_dados(
     consulta = client.get("/conta").get_json()
     assert consulta["nome"] == "Nome Novo"
     assert consulta["email"] == "novo@teste.com"
+
+
+def test_editar_conta_mantendo_o_proprio_email_e_permitido(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04: o e-mail da própria conta não conta como duplicado."""
+    response = client.put(
+        "/conta",
+        json={
+            "nome": "Nome Novo",
+            "email": conta_logada["email"],
+            "confirmar": True,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["nome"] == "Nome Novo"
