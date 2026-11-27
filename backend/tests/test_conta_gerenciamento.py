@@ -82,3 +82,18 @@ def test_consultar_conta_sem_login_retorna_401(client: FlaskClient) -> None:
 
     assert response.status_code == 401
     assert response.get_json() == {"erro": "Não autenticado."}
+
+
+def test_consultar_conta_retorna_dados_sem_senha(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04: o usuário autenticado vê os dados atuais da própria conta."""
+    response = client.get("/conta")
+
+    assert response.status_code == 200
+    dados = response.get_json()
+    assert dados["nome"] == conta_logada["nome"]
+    assert dados["email"] == conta_logada["email"]
+    assert "senha" not in dados
+    assert "senha_hash" not in dados
