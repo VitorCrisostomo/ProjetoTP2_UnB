@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.conta.conta_model import Conta, DadosInvalidosError
 from app.conta.conta_repository import (
     buscar_conta_por_email,
+    buscar_conta_por_id,
     inserir_conta,
     remover_conta,
 )
@@ -99,3 +100,9 @@ def excluir_conta(conexao: sqlite3.Connection, conta_id: int) -> None:
     """Exclui a conta com o identificador informado."""
 
     remover_conta(conexao, conta_id)
+
+
+def obter_conta(conexao: sqlite3.Connection, conta_id: int) -> Conta | None:
+    """Busca uma conta pelo identificador."""
+
+    return buscar_conta_por_id(conexao, conta_id)

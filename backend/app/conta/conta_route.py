@@ -3,13 +3,29 @@
 from flask import Blueprint, Response, jsonify, request, session
 
 from app.conta.conta_model import (
+    Conta,
     DadosInvalidosError,
     EmailJaCadastradoError,
 )
-from app.conta.conta_service import autenticar_conta, cadastrar_conta, excluir_conta
+from app.conta.conta_service import (
+    autenticar_conta,
+    cadastrar_conta,
+    excluir_conta,
+    obter_conta,
+)
 from app.db import get_db
 
 conta_bp = Blueprint("conta", __name__)
+
+
+def _conta_logada() -> Conta | None:
+    """Devolve a conta da sessão atual, ou None se não houver conta válida."""
+
+    conta_id = session.get("conta_id")
+    if conta_id is None:
+        return None
+
+    return obter_conta(get_db(), conta_id)
 
 
 @conta_bp.post("/contas")
@@ -82,12 +98,13 @@ def login() -> tuple[Response, int]:
 def excluir_conta_logada() -> tuple[Response, int]:
     """Exclui a conta do usuário autenticado após confirmação."""
 
-    if "conta_id" not in session:
+    conta = _conta_logada()
+    if conta is None:
         return jsonify({"erro": "Não autenticado."}), 401
 
     dados = request.get_json(silent=True)
     if isinstance(dados, dict) and dados.get("confirmar") is True:
-        excluir_conta(get_db(), session["conta_id"])
+        excluir_conta(get_db(), conta.id)
         session.clear()
         return Response(), 204
 

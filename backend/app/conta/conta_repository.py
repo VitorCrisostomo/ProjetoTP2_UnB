@@ -81,3 +81,22 @@ def remover_conta(conexao: sqlite3.Connection, conta_id: int) -> None:
 
     conexao.execute("DELETE FROM contas WHERE id = ?", (conta_id,))
     conexao.commit()
+
+
+def buscar_conta_por_id(conexao: sqlite3.Connection, conta_id: int) -> Conta | None:
+    """Busca uma conta pelo identificador."""
+
+    registro = conexao.execute(
+        "SELECT id, nome, email, senha_hash FROM contas WHERE id = ?",
+        (conta_id,),
+    ).fetchone()
+
+    if registro is None:
+        return None
+
+    return Conta(
+        id=registro["id"],
+        nome=registro["nome"],
+        email=registro["email"],
+        senha_hash=registro["senha_hash"],
+    )
