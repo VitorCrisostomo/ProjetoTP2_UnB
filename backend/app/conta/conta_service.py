@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.conta.conta_model import Conta, DadosInvalidosError, EmailJaCadastradoError
 from app.conta.conta_repository import (
     alterar_conta,
+    alterar_papel,
     buscar_conta_por_email,
     buscar_conta_por_id,
     inserir_conta,
@@ -146,3 +147,9 @@ def atualizar_conta(
         raise EmailJaCadastradoError("E-mail já cadastrado.")
 
     return alterar_conta(conexao, conta.id, nome, email, senha_hash)
+
+
+def definir_papel(conexao: sqlite3.Connection, email: str, papel: str) -> None:
+    """Define o papel da conta identificada pelo e-mail."""
+
+    alterar_papel(conexao, email, papel)

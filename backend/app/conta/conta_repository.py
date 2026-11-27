@@ -13,7 +13,8 @@ def criar_tabela_contas(conexao: sqlite3.Connection) -> None:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
-            senha_hash TEXT NOT NULL
+            senha_hash TEXT NOT NULL,
+            papel TEXT NOT NULL DEFAULT 'usuario'
         )
         """
     )
@@ -87,7 +88,7 @@ def buscar_conta_por_id(conexao: sqlite3.Connection, conta_id: int) -> Conta | N
     """Busca uma conta pelo identificador."""
 
     registro = conexao.execute(
-        "SELECT id, nome, email, senha_hash FROM contas WHERE id = ?",
+        "SELECT id, nome, email, senha_hash, papel FROM contas WHERE id = ?",
         (conta_id,),
     ).fetchone()
 
@@ -99,6 +100,7 @@ def buscar_conta_por_id(conexao: sqlite3.Connection, conta_id: int) -> Conta | N
         nome=registro["nome"],
         email=registro["email"],
         senha_hash=registro["senha_hash"],
+        papel=registro["papel"],
     )
 
 
@@ -118,3 +120,10 @@ def alterar_conta(
     conexao.commit()
 
     return Conta(id=conta_id, nome=nome, email=email, senha_hash=senha_hash)
+
+
+def alterar_papel(conexao: sqlite3.Connection, email: str, papel: str) -> None:
+    """Atualiza o papel da conta que possui o e-mail informado."""
+
+    conexao.execute("UPDATE contas SET papel = ? WHERE email = ?", (papel, email))
+    conexao.commit()

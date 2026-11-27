@@ -36,7 +36,7 @@ def _dados_publicos(conta: Conta) -> dict[str, object]:
         "id": conta.id,
         "nome": conta.nome,
         "email": conta.email,
-        "papel": "usuario",
+        "papel": conta.papel,
     }
 
 

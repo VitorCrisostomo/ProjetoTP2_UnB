@@ -11,6 +11,7 @@ class Conta:
     nome: str
     email: str
     senha_hash: str
+    papel: str = "usuario"
 
 
 class EmailJaCadastradoError(Exception):
