@@ -298,3 +298,14 @@ def test_cadastro_sem_senha_informa_campos_obrigatorios(client: FlaskClient) -> 
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Campos obrigatórios."}
+
+
+def test_cadastro_com_senha_curta_e_rejeitado(client: FlaskClient) -> None:
+    """HU02 C3: senha com menos de 8 caracteres é inválida."""
+    response = client.post(
+        "/contas",
+        json={"nome": "Usuario", "email": "usuario@teste.com", "senha": "Ab1"},
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Senha inválida."}
