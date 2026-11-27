@@ -57,9 +57,10 @@ def autenticar_conta(
 ) -> Conta | None:
     """Autentica uma conta utilizando e-mail e senha."""
 
-    if not isinstance(email, str) or not re.fullmatch(
-        r"[^@\s]+@[^@\s]+\.[^@\s]+", email
-    ):
+    if not isinstance(email, str) or not email.strip():
+        raise DadosInvalidosError("Campos obrigatórios.")
+
+    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
         raise DadosInvalidosError("E-mail inválido.")
 
     if not isinstance(senha, str) or not senha.strip():
