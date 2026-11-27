@@ -31,6 +31,8 @@ def validar_dados(
 
     if len(senha) < 8:
         raise DadosInvalidosError("Senha inválida.")
+    if not any(c.isdigit() for c in senha):
+        raise DadosInvalidosError("Senha inválida.")
 
     return nome, email, senha
 
