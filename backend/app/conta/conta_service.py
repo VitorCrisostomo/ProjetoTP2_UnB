@@ -29,6 +29,9 @@ def validar_dados(
     if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
         raise DadosInvalidosError("E-mail inválido.")
 
+    if len(senha) < 8:
+        raise DadosInvalidosError("Senha inválida.")
+
     return nome, email, senha
 
 
