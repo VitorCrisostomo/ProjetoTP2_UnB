@@ -16,16 +16,18 @@ def validar_dados(
 ) -> tuple[str, str, str]:
     """Valida os dados fornecidos para uma conta."""
 
-    if not isinstance(nome, str) or not nome.strip():
-        raise DadosInvalidosError("Nome inválido.")
-
-    if not isinstance(email, str) or not re.fullmatch(
-        r"[^@\s]+@[^@\s]+\.[^@\s]+", email
+    if (
+        not isinstance(nome, str)
+        or not isinstance(email, str)
+        or not isinstance(senha, str)
+        or not nome.strip()
+        or not email.strip()
+        or not senha.strip()
     ):
-        raise DadosInvalidosError("E-mail inválido.")
+        raise DadosInvalidosError("Campos obrigatórios.")
 
-    if not isinstance(senha, str) or not senha.strip():
-        raise DadosInvalidosError("Senha inválida.")
+    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        raise DadosInvalidosError("E-mail inválido.")
 
     return nome, email, senha
 
