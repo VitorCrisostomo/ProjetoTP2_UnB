@@ -41,3 +41,20 @@ def conta_cadastrada(client: FlaskClient) -> dict[str, str]:
     }
     assert client.post("/contas", json=dados).status_code == 201
     return dados
+
+
+@pytest.fixture
+def conta_logada(
+    client: FlaskClient,
+    conta_cadastrada: dict[str, str],
+) -> dict[str, str]:
+    """Cadastra uma conta e autentica o cliente de teste com ela."""
+    resposta = client.post(
+        "/login",
+        json={
+            "email": conta_cadastrada["email"],
+            "senha": conta_cadastrada["senha"],
+        },
+    )
+    assert resposta.status_code == 200
+    return conta_cadastrada
