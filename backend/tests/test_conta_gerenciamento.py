@@ -137,3 +137,18 @@ def test_editar_conta_com_nome_vazio_retorna_400(
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Campos obrigatórios."}
     assert client.get("/conta").get_json()["nome"] == conta_logada["nome"]
+
+
+def test_editar_conta_com_email_invalido_retorna_400(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04 C3: e-mail sem formato válido é recusado."""
+    response = client.put(
+        "/conta",
+        json={"nome": "Nome Novo", "email": "emailinvalido", "confirmar": True},
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "E-mail inválido."}
+    assert client.get("/conta").get_json()["email"] == conta_logada["email"]
