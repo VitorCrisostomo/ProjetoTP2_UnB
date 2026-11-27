@@ -279,3 +279,11 @@ def test_login_com_email_mal_formatado_retorna_credenciais_invalidas(
 
     assert response.status_code == 401
     assert response.get_json() == {"erro": "Credenciais inválidas."}
+
+
+def test_login_sem_corpo_json_retorna_400(client: FlaskClient) -> None:
+    """HU01: requisição sem JSON válido é recusada."""
+    response = client.post("/login", data="texto puro")
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Dados inválidos."}
