@@ -229,3 +229,11 @@ def test_login_sem_senha_informa_campos_obrigatorios(client: FlaskClient) -> Non
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Campos obrigatórios."}
+
+
+def test_login_sem_email_informa_campos_obrigatorios(client: FlaskClient) -> None:
+    """HU01 C1: e-mail ausente no login retorna erro de campos obrigatórios."""
+    response = client.post("/login", json={"senha": "Senha123"})
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Campos obrigatórios."}
