@@ -6,7 +6,7 @@ from app.conta.conta_model import (
     DadosInvalidosError,
     EmailJaCadastradoError,
 )
-from app.conta.conta_service import autenticar_conta, cadastrar_conta
+from app.conta.conta_service import autenticar_conta, cadastrar_conta, excluir_conta
 from app.db import get_db
 
 conta_bp = Blueprint("conta", __name__)
@@ -84,5 +84,10 @@ def excluir_conta_logada() -> tuple[Response, int]:
 
     if "conta_id" not in session:
         return jsonify({"erro": "Não autenticado."}), 401
+
+    dados = request.get_json(silent=True)
+    if isinstance(dados, dict) and dados.get("confirmar") is True:
+        excluir_conta(get_db(), session["conta_id"])
+        return Response(), 204
 
     return jsonify({"excluida": False}), 200

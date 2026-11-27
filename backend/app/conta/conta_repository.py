@@ -74,3 +74,10 @@ def buscar_conta_por_email(
         email=registro["email"],
         senha_hash=registro["senha_hash"],
     )
+
+
+def remover_conta(conexao: sqlite3.Connection, conta_id: int) -> None:
+    """Remove uma conta do banco de dados."""
+
+    conexao.execute("DELETE FROM contas WHERE id = ?", (conta_id,))
+    conexao.commit()
