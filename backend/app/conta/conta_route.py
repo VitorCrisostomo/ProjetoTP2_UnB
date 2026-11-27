@@ -82,4 +82,7 @@ def login() -> tuple[Response, int]:
 def excluir_conta_logada() -> tuple[Response, int]:
     """Exclui a conta do usuário autenticado após confirmação."""
 
-    return jsonify({"erro": "Não autenticado."}), 401
+    if "conta_id" not in session:
+        return jsonify({"erro": "Não autenticado."}), 401
+
+    return jsonify({"excluida": False}), 200
