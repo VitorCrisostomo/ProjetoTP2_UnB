@@ -29,3 +29,15 @@ def app(tmp_path: Path) -> Flask:
 def client(app: Flask) -> FlaskClient:
     """Cliente HTTP de teste ligado ao banco temporário."""
     return app.test_client()
+
+
+@pytest.fixture
+def conta_cadastrada(client: FlaskClient) -> dict[str, str]:
+    """Cadastra uma conta comum e devolve seus dados em texto puro."""
+    dados = {
+        "nome": "Usuario Teste",
+        "email": "usuario@teste.com",
+        "senha": "Senha123",
+    }
+    assert client.post("/contas", json=dados).status_code == 201
+    return dados

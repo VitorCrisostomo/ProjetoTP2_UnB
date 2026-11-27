@@ -237,3 +237,19 @@ def test_login_sem_email_informa_campos_obrigatorios(client: FlaskClient) -> Non
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Campos obrigatórios."}
+
+
+def test_login_com_senha_errada_retorna_credenciais_invalidas(
+    client: FlaskClient,
+    conta_cadastrada: dict[str, str],
+) -> None:
+    """HU01: senha incorreta não autentica nem cria sessão."""
+    response = client.post(
+        "/login",
+        json={"email": conta_cadastrada["email"], "senha": "SenhaErrada1"},
+    )
+
+    assert response.status_code == 401
+    assert response.get_json() == {"erro": "Credenciais inválidas."}
+    with client.session_transaction() as sessao:
+        assert "conta_id" not in sessao
