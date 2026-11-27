@@ -57,10 +57,12 @@ def autenticar_conta(
 ) -> Conta | None:
     """Autentica uma conta utilizando e-mail e senha."""
 
-    if not isinstance(email, str) or not email.strip():
-        raise DadosInvalidosError("Campos obrigatórios.")
-
-    if not isinstance(senha, str) or not senha.strip():
+    if (
+        not isinstance(email, str)
+        or not isinstance(senha, str)
+        or not email.strip()
+        or not senha.strip()
+    ):
         raise DadosInvalidosError("Campos obrigatórios.")
 
     conta = buscar_conta_por_email(conexao, email)
