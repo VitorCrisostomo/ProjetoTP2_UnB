@@ -132,11 +132,12 @@ def atualizar_conta(
     if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
         raise DadosInvalidosError("E-mail inválido.")
 
+    senha_hash = conta.senha_hash
     if senha is not None:
-        validar_senha(senha)
+        senha_hash = generate_password_hash(validar_senha(senha))
 
     existente = buscar_conta_por_email(conexao, email)
     if existente is not None and existente.id != conta.id:
         raise EmailJaCadastradoError("E-mail já cadastrado.")
 
-    return alterar_conta(conexao, conta.id, nome, email, conta.senha_hash)
+    return alterar_conta(conexao, conta.id, nome, email, senha_hash)
