@@ -5,7 +5,7 @@ import sqlite3
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.conta.conta_model import Conta, DadosInvalidosError
+from app.conta.conta_model import Conta, DadosInvalidosError, EmailJaCadastradoError
 from app.conta.conta_repository import (
     buscar_conta_por_email,
     buscar_conta_por_id,
@@ -133,5 +133,8 @@ def atualizar_conta(
 
     if senha is not None:
         validar_senha(senha)
+
+    if buscar_conta_por_email(conexao, email) is not None:
+        raise EmailJaCadastradoError("E-mail já cadastrado.")
 
     return conta

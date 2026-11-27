@@ -151,5 +151,7 @@ def editar_conta_logada() -> tuple[Response, int]:
         )
     except DadosInvalidosError as erro:
         return jsonify({"erro": str(erro)}), 400
+    except EmailJaCadastradoError:
+        return jsonify({"erro": "E-mail já cadastrado."}), 409
 
     return jsonify({"atualizada": True}), 200
