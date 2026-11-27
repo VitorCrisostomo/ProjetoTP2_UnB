@@ -142,7 +142,7 @@ def editar_conta_logada() -> tuple[Response, int]:
         return jsonify({"atualizada": False}), 200
 
     try:
-        atualizar_conta(
+        atualizada = atualizar_conta(
             get_db(),
             conta,
             dados.get("nome"),
@@ -154,4 +154,10 @@ def editar_conta_logada() -> tuple[Response, int]:
     except EmailJaCadastradoError:
         return jsonify({"erro": "E-mail já cadastrado."}), 409
 
-    return jsonify({"atualizada": True}), 200
+    return jsonify(
+        {
+            "id": atualizada.id,
+            "nome": atualizada.nome,
+            "email": atualizada.email,
+        }
+    ), 200

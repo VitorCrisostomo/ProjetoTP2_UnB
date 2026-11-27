@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.conta.conta_model import Conta, DadosInvalidosError, EmailJaCadastradoError
 from app.conta.conta_repository import (
+    alterar_conta,
     buscar_conta_por_email,
     buscar_conta_por_id,
     inserir_conta,
@@ -137,4 +138,4 @@ def atualizar_conta(
     if buscar_conta_por_email(conexao, email) is not None:
         raise EmailJaCadastradoError("E-mail já cadastrado.")
 
-    return conta
+    return alterar_conta(conexao, conta.id, nome, email, conta.senha_hash)

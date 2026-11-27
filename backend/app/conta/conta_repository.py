@@ -100,3 +100,21 @@ def buscar_conta_por_id(conexao: sqlite3.Connection, conta_id: int) -> Conta | N
         email=registro["email"],
         senha_hash=registro["senha_hash"],
     )
+
+
+def alterar_conta(
+    conexao: sqlite3.Connection,
+    conta_id: int,
+    nome: str,
+    email: str,
+    senha_hash: str,
+) -> Conta:
+    """Atualiza nome, e-mail e hash da senha de uma conta."""
+
+    conexao.execute(
+        "UPDATE contas SET nome = ?, email = ?, senha_hash = ? WHERE id = ?",
+        (nome, email, senha_hash, conta_id),
+    )
+    conexao.commit()
+
+    return Conta(id=conta_id, nome=nome, email=email, senha_hash=senha_hash)
