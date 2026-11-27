@@ -29,6 +29,12 @@ def _conta_logada() -> Conta | None:
     return obter_conta(get_db(), conta_id)
 
 
+def _dados_publicos(conta: Conta) -> dict[str, object]:
+    """Dados da conta que a API pode devolver (nunca a senha nem o hash)."""
+
+    return {"id": conta.id, "nome": conta.nome, "email": conta.email}
+
+
 def _nao_autenticado() -> tuple[Response, int]:
     """Resposta padrão para operações que exigem login."""
 
@@ -58,13 +64,7 @@ def criar_conta() -> tuple[Response, int]:
     except EmailJaCadastradoError:
         return jsonify({"erro": "E-mail já cadastrado."}), 409
 
-    return jsonify(
-        {
-            "id": conta.id,
-            "nome": conta.nome,
-            "email": conta.email,
-        }
-    ), 201
+    return jsonify(_dados_publicos(conta)), 201
 
 
 @conta_bp.post("/login")
@@ -92,13 +92,7 @@ def login() -> tuple[Response, int]:
     session.clear()
     session["conta_id"] = conta.id
 
-    return jsonify(
-        {
-            "id": conta.id,
-            "nome": conta.nome,
-            "email": conta.email,
-        }
-    ), 200
+    return jsonify(_dados_publicos(conta)), 200
 
 
 @conta_bp.delete("/conta")
@@ -126,7 +120,7 @@ def consultar_conta() -> tuple[Response, int]:
     if conta is None:
         return _nao_autenticado()
 
-    return jsonify({"id": conta.id, "nome": conta.nome, "email": conta.email}), 200
+    return jsonify(_dados_publicos(conta)), 200
 
 
 @conta_bp.put("/conta")
@@ -154,10 +148,4 @@ def editar_conta_logada() -> tuple[Response, int]:
     except EmailJaCadastradoError:
         return jsonify({"erro": "E-mail já cadastrado."}), 409
 
-    return jsonify(
-        {
-            "id": atualizada.id,
-            "nome": atualizada.nome,
-            "email": atualizada.email,
-        }
-    ), 200
+    return jsonify(_dados_publicos(atualizada)), 200
