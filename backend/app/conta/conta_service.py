@@ -135,7 +135,8 @@ def atualizar_conta(
     if senha is not None:
         validar_senha(senha)
 
-    if buscar_conta_por_email(conexao, email) is not None:
+    existente = buscar_conta_por_email(conexao, email)
+    if existente is not None and existente.id != conta.id:
         raise EmailJaCadastradoError("E-mail já cadastrado.")
 
     return alterar_conta(conexao, conta.id, nome, email, conta.senha_hash)
