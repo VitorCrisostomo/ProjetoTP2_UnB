@@ -253,3 +253,16 @@ def test_login_com_senha_errada_retorna_credenciais_invalidas(
     assert response.get_json() == {"erro": "Credenciais inválidas."}
     with client.session_transaction() as sessao:
         assert "conta_id" not in sessao
+
+
+def test_login_com_email_nao_cadastrado_retorna_credenciais_invalidas(
+    client: FlaskClient,
+) -> None:
+    """HU01: e-mail inexistente retorna a mesma mensagem de senha errada."""
+    response = client.post(
+        "/login",
+        json={"email": "naoexiste@teste.com", "senha": "Senha123"},
+    )
+
+    assert response.status_code == 401
+    assert response.get_json() == {"erro": "Credenciais inválidas."}
