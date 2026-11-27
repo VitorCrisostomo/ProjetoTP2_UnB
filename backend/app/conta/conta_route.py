@@ -88,6 +88,7 @@ def excluir_conta_logada() -> tuple[Response, int]:
     dados = request.get_json(silent=True)
     if isinstance(dados, dict) and dados.get("confirmar") is True:
         excluir_conta(get_db(), session["conta_id"])
+        session.clear()
         return Response(), 204
 
     return jsonify({"excluida": False}), 200
