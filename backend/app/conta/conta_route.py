@@ -32,7 +32,12 @@ def _conta_logada() -> Conta | None:
 def _dados_publicos(conta: Conta) -> dict[str, object]:
     """Dados da conta que a API pode devolver (nunca a senha nem o hash)."""
 
-    return {"id": conta.id, "nome": conta.nome, "email": conta.email}
+    return {
+        "id": conta.id,
+        "nome": conta.nome,
+        "email": conta.email,
+        "papel": "usuario",
+    }
 
 
 def _nao_autenticado() -> tuple[Response, int]:
