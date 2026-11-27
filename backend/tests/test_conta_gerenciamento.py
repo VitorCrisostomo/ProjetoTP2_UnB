@@ -97,3 +97,11 @@ def test_consultar_conta_retorna_dados_sem_senha(
     assert dados["email"] == conta_logada["email"]
     assert "senha" not in dados
     assert "senha_hash" not in dados
+
+
+def test_editar_conta_sem_login_retorna_401(client: FlaskClient) -> None:
+    """HU04 C1: usuário não autenticado não edita conta."""
+    response = client.put("/conta", json={"nome": "Novo", "confirmar": True})
+
+    assert response.status_code == 401
+    assert response.get_json() == {"erro": "Não autenticado."}
