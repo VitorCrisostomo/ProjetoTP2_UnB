@@ -125,4 +125,7 @@ def atualizar_conta(
     ):
         raise DadosInvalidosError("Campos obrigatórios.")
 
+    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        raise DadosInvalidosError("E-mail inválido.")
+
     return conta
