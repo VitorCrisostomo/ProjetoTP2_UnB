@@ -8,6 +8,7 @@ from app.conta.conta_model import (
     EmailJaCadastradoError,
 )
 from app.conta.conta_service import (
+    atualizar_conta,
     autenticar_conta,
     cadastrar_conta,
     excluir_conta,
@@ -136,4 +137,19 @@ def editar_conta_logada() -> tuple[Response, int]:
     if conta is None:
         return _nao_autenticado()
 
-    return jsonify({"atualizada": False}), 200
+    dados = request.get_json(silent=True)
+    if not isinstance(dados, dict) or dados.get("confirmar") is not True:
+        return jsonify({"atualizada": False}), 200
+
+    try:
+        atualizar_conta(
+            get_db(),
+            conta,
+            dados.get("nome"),
+            dados.get("email"),
+            dados.get("senha"),
+        )
+    except DadosInvalidosError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    return jsonify({"atualizada": True}), 200

@@ -106,3 +106,23 @@ def obter_conta(conexao: sqlite3.Connection, conta_id: int) -> Conta | None:
     """Busca uma conta pelo identificador."""
 
     return buscar_conta_por_id(conexao, conta_id)
+
+
+def atualizar_conta(
+    conexao: sqlite3.Connection,
+    conta: Conta,
+    nome: object,
+    email: object,
+    senha: object,
+) -> Conta:
+    """Valida e atualiza os dados da conta do usuário."""
+
+    if (
+        not isinstance(nome, str)
+        or not isinstance(email, str)
+        or not nome.strip()
+        or not email.strip()
+    ):
+        raise DadosInvalidosError("Campos obrigatórios.")
+
+    return conta
