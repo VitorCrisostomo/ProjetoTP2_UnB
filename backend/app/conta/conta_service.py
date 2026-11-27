@@ -14,15 +14,18 @@ from app.conta.conta_repository import (
 )
 
 
-def validar_senha(senha: str) -> None:
+def validar_senha(senha: object) -> str:
     """Exige ao menos 8 caracteres, com pelo menos uma letra e um número."""
 
     if (
-        len(senha) < 8
+        not isinstance(senha, str)
+        or len(senha) < 8
         or not any(c.isdigit() for c in senha)
         or not any(c.isalpha() for c in senha)
     ):
         raise DadosInvalidosError("Senha inválida.")
+
+    return senha
 
 
 def validar_dados(
@@ -127,5 +130,8 @@ def atualizar_conta(
 
     if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
         raise DadosInvalidosError("E-mail inválido.")
+
+    if senha is not None:
+        validar_senha(senha)
 
     return conta
