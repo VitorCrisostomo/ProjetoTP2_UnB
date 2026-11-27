@@ -76,3 +76,10 @@ def login() -> tuple[Response, int]:
             "email": conta.email,
         }
     ), 200
+
+
+@conta_bp.delete("/conta")
+def excluir_conta_logada() -> tuple[Response, int]:
+    """Exclui a conta do usuário autenticado após confirmação."""
+
+    return jsonify({"erro": "Não autenticado."}), 401
