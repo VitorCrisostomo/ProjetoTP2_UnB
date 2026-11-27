@@ -9,6 +9,17 @@ from app.conta.conta_model import Conta, DadosInvalidosError
 from app.conta.conta_repository import buscar_conta_por_email, inserir_conta
 
 
+def validar_senha(senha: str) -> None:
+    """Exige ao menos 8 caracteres, com pelo menos uma letra e um número."""
+
+    if (
+        len(senha) < 8
+        or not any(c.isdigit() for c in senha)
+        or not any(c.isalpha() for c in senha)
+    ):
+        raise DadosInvalidosError("Senha inválida.")
+
+
 def validar_dados(
     nome: object,
     email: object,
@@ -29,11 +40,7 @@ def validar_dados(
     if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
         raise DadosInvalidosError("E-mail inválido.")
 
-    if len(senha) < 8 or not any(c.isdigit() for c in senha):
-        raise DadosInvalidosError("Senha inválida.")
-
-    if not any(c.isalpha() for c in senha):
-        raise DadosInvalidosError("Senha inválida.")
+    validar_senha(senha)
 
     return nome, email, senha
 
