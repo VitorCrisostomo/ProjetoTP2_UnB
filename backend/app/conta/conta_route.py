@@ -109,3 +109,10 @@ def excluir_conta_logada() -> tuple[Response, int]:
         return Response(), 204
 
     return jsonify({"excluida": False}), 200
+
+
+@conta_bp.get("/conta")
+def consultar_conta() -> tuple[Response, int]:
+    """Devolve os dados da conta do usuário autenticado."""
+
+    return jsonify({"erro": "Não autenticado."}), 401
