@@ -266,3 +266,16 @@ def test_login_com_email_nao_cadastrado_retorna_credenciais_invalidas(
 
     assert response.status_code == 401
     assert response.get_json() == {"erro": "Credenciais inválidas."}
+
+
+def test_login_com_email_mal_formatado_retorna_credenciais_invalidas(
+    client: FlaskClient,
+) -> None:
+    """HU01: e-mail sem formato válido não está cadastrado, logo é 401."""
+    response = client.post(
+        "/login",
+        json={"email": "emailinvalido", "senha": "Senha123"},
+    )
+
+    assert response.status_code == 401
+    assert response.get_json() == {"erro": "Credenciais inválidas."}
