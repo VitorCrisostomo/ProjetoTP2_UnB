@@ -63,7 +63,7 @@ def autenticar_conta(
         raise DadosInvalidosError("E-mail inválido.")
 
     if not isinstance(senha, str) or not senha.strip():
-        raise DadosInvalidosError("Senha inválida.")
+        raise DadosInvalidosError("Campos obrigatórios.")
 
     conta = buscar_conta_por_email(conexao, email)
 
