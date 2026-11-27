@@ -58,3 +58,19 @@ def test_excluir_conta_invalida_sessao_e_credenciais(
         json={"email": conta_logada["email"], "senha": conta_logada["senha"]},
     )
     assert login.status_code == 401
+
+
+def test_excluir_conta_com_sessao_de_conta_inexistente_retorna_401(
+    app: Flask,
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """Sessão antiga de uma conta já apagada não conta como autenticada."""
+    with app.app_context():
+        conexao = get_db()
+        conexao.execute("DELETE FROM contas")
+        conexao.commit()
+
+    response = client.delete("/conta", json={"confirmar": True})
+
+    assert response.status_code == 401
