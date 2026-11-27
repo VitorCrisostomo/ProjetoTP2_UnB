@@ -287,3 +287,14 @@ def test_login_sem_corpo_json_retorna_400(client: FlaskClient) -> None:
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Dados inválidos."}
+
+
+def test_cadastro_sem_senha_informa_campos_obrigatorios(client: FlaskClient) -> None:
+    """HU02 C1: campo ausente retorna erro de campos obrigatórios."""
+    response = client.post(
+        "/contas",
+        json={"nome": "Usuario", "email": "usuario@teste.com"},
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Campos obrigatórios."}
