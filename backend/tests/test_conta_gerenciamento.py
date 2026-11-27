@@ -122,3 +122,18 @@ def test_editar_conta_sem_confirmacao_mantem_os_dados(
     consulta = client.get("/conta").get_json()
     assert consulta["nome"] == conta_logada["nome"]
     assert consulta["email"] == conta_logada["email"]
+
+
+def test_editar_conta_com_nome_vazio_retorna_400(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04 C3: dados inválidos são recusados e os anteriores permanecem."""
+    response = client.put(
+        "/conta",
+        json={"nome": "", "email": conta_logada["email"], "confirmar": True},
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Campos obrigatórios."}
+    assert client.get("/conta").get_json()["nome"] == conta_logada["nome"]
