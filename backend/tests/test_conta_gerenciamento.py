@@ -171,3 +171,28 @@ def test_editar_conta_com_senha_fraca_retorna_400(
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Senha inválida."}
+
+
+def test_editar_conta_com_email_de_outra_conta_retorna_409(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04 C4: e-mail de outra conta é recusado e os dados são mantidos."""
+    cadastro = client.post(
+        "/contas",
+        json={
+            "nome": "Outra Pessoa",
+            "email": "outra@teste.com",
+            "senha": "Senha456",
+        },
+    )
+    assert cadastro.status_code == 201
+
+    response = client.put(
+        "/conta",
+        json={"nome": "Nome Novo", "email": "outra@teste.com", "confirmar": True},
+    )
+
+    assert response.status_code == 409
+    assert response.get_json() == {"erro": "E-mail já cadastrado."}
+    assert client.get("/conta").get_json()["email"] == conta_logada["email"]
