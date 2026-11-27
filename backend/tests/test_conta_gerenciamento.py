@@ -74,3 +74,11 @@ def test_excluir_conta_com_sessao_de_conta_inexistente_retorna_401(
     response = client.delete("/conta", json={"confirmar": True})
 
     assert response.status_code == 401
+
+
+def test_consultar_conta_sem_login_retorna_401(client: FlaskClient) -> None:
+    """HU04 C1: usuário não autenticado não consulta dados de conta."""
+    response = client.get("/conta")
+
+    assert response.status_code == 401
+    assert response.get_json() == {"erro": "Não autenticado."}
