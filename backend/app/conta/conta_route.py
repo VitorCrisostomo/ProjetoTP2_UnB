@@ -115,4 +115,8 @@ def excluir_conta_logada() -> tuple[Response, int]:
 def consultar_conta() -> tuple[Response, int]:
     """Devolve os dados da conta do usuário autenticado."""
 
-    return jsonify({"erro": "Não autenticado."}), 401
+    conta = _conta_logada()
+    if conta is None:
+        return jsonify({"erro": "Não autenticado."}), 401
+
+    return jsonify({"id": conta.id, "nome": conta.nome, "email": conta.email}), 200
