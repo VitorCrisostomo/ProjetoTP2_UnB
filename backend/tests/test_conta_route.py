@@ -324,3 +324,18 @@ def test_cadastro_senha_sem_numero_e_rejeitada(client: FlaskClient) -> None:
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Senha inválida."}
+
+
+def test_cadastro_senha_sem_letra_e_rejeitada(client: FlaskClient) -> None:
+    """HU02 C3: senha sem nenhuma letra é inválida."""
+    response = client.post(
+        "/contas",
+        json={
+            "nome": "Usuario",
+            "email": "usuario@teste.com",
+            "senha": "12345678",
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Senha inválida."}
