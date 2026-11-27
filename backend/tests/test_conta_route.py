@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import pytest
+from flask.testing import FlaskClient
 from werkzeug.security import check_password_hash
 
 from app import create_app
@@ -220,3 +221,11 @@ def test_login_credenciais_validas(tmp_path: Path) -> None:
 
     with client.session_transaction() as sessao:
         assert sessao["conta_id"] == cadastro.get_json()["id"]
+
+
+def test_login_sem_senha_informa_campos_obrigatorios(client: FlaskClient) -> None:
+    """HU01 C1: campo ausente no login retorna erro de campos obrigatórios."""
+    response = client.post("/login", json={"email": "usuario@teste.com"})
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Campos obrigatórios."}
