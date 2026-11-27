@@ -152,3 +152,22 @@ def test_editar_conta_com_email_invalido_retorna_400(
     assert response.status_code == 400
     assert response.get_json() == {"erro": "E-mail inválido."}
     assert client.get("/conta").get_json()["email"] == conta_logada["email"]
+
+
+def test_editar_conta_com_senha_fraca_retorna_400(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04 C3: nova senha que não atende às regras é recusada."""
+    response = client.put(
+        "/conta",
+        json={
+            "nome": conta_logada["nome"],
+            "email": conta_logada["email"],
+            "senha": "123",
+            "confirmar": True,
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Senha inválida."}
