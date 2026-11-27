@@ -120,3 +120,10 @@ def consultar_conta() -> tuple[Response, int]:
         return jsonify({"erro": "Não autenticado."}), 401
 
     return jsonify({"id": conta.id, "nome": conta.nome, "email": conta.email}), 200
+
+
+@conta_bp.put("/conta")
+def editar_conta_logada() -> tuple[Response, int]:
+    """Atualiza os dados da conta do usuário autenticado."""
+
+    return jsonify({"erro": "Não autenticado."}), 401
