@@ -28,6 +28,12 @@ def _conta_logada() -> Conta | None:
     return obter_conta(get_db(), conta_id)
 
 
+def _nao_autenticado() -> tuple[Response, int]:
+    """Resposta padrão para operações que exigem login."""
+
+    return jsonify({"erro": "Não autenticado."}), 401
+
+
 @conta_bp.post("/contas")
 def criar_conta() -> tuple[Response, int]:
     """Recebe uma solicitação de cadastro de conta."""
@@ -100,7 +106,7 @@ def excluir_conta_logada() -> tuple[Response, int]:
 
     conta = _conta_logada()
     if conta is None:
-        return jsonify({"erro": "Não autenticado."}), 401
+        return _nao_autenticado()
 
     dados = request.get_json(silent=True)
     if isinstance(dados, dict) and dados.get("confirmar") is True:
@@ -117,7 +123,7 @@ def consultar_conta() -> tuple[Response, int]:
 
     conta = _conta_logada()
     if conta is None:
-        return jsonify({"erro": "Não autenticado."}), 401
+        return _nao_autenticado()
 
     return jsonify({"id": conta.id, "nome": conta.nome, "email": conta.email}), 200
 
@@ -126,4 +132,4 @@ def consultar_conta() -> tuple[Response, int]:
 def editar_conta_logada() -> tuple[Response, int]:
     """Atualiza os dados da conta do usuário autenticado."""
 
-    return jsonify({"erro": "Não autenticado."}), 401
+    return _nao_autenticado()
