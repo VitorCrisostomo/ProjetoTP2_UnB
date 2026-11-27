@@ -215,6 +215,7 @@ def test_editar_conta_valida_atualiza_e_persiste_os_dados(
         "id": id_conta,
         "nome": "Nome Novo",
         "email": "novo@teste.com",
+        "papel": "usuario",
     }
     consulta = client.get("/conta").get_json()
     assert consulta["nome"] == "Nome Novo"
@@ -266,3 +267,13 @@ def test_editar_conta_com_nova_senha_troca_as_credenciais(
 
     assert antiga.status_code == 401
     assert nova.status_code == 200
+
+
+def test_consultar_conta_informa_papel_usuario_por_padrao(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """Toda conta nova começa com o papel de usuário comum."""
+    response = client.get("/conta")
+
+    assert response.get_json()["papel"] == "usuario"
