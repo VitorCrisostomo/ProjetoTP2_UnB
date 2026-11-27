@@ -237,3 +237,32 @@ def test_editar_conta_mantendo_o_proprio_email_e_permitido(
 
     assert response.status_code == 200
     assert response.get_json()["nome"] == "Nome Novo"
+
+
+def test_editar_conta_com_nova_senha_troca_as_credenciais(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU04: a nova senha passa a valer e a antiga deixa de valer."""
+    response = client.put(
+        "/conta",
+        json={
+            "nome": conta_logada["nome"],
+            "email": conta_logada["email"],
+            "senha": "NovaSenha456",
+            "confirmar": True,
+        },
+    )
+    assert response.status_code == 200
+
+    antiga = client.post(
+        "/login",
+        json={"email": conta_logada["email"], "senha": conta_logada["senha"]},
+    )
+    nova = client.post(
+        "/login",
+        json={"email": conta_logada["email"], "senha": "NovaSenha456"},
+    )
+
+    assert antiga.status_code == 401
+    assert nova.status_code == 200
