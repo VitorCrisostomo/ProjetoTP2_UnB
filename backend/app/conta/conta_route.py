@@ -132,4 +132,8 @@ def consultar_conta() -> tuple[Response, int]:
 def editar_conta_logada() -> tuple[Response, int]:
     """Atualiza os dados da conta do usuário autenticado."""
 
-    return _nao_autenticado()
+    conta = _conta_logada()
+    if conta is None:
+        return _nao_autenticado()
+
+    return jsonify({"atualizada": False}), 200
