@@ -15,6 +15,13 @@ from app.conta.conta_repository import (
 )
 
 
+def validar_email(email: str) -> None:
+    """Exige que o e-mail tenha o formato nome@dominio.extensao."""
+
+    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        raise DadosInvalidosError("E-mail inválido.")
+
+
 def validar_senha(senha: object) -> str:
     """Exige ao menos 8 caracteres, com pelo menos uma letra e um número."""
 
@@ -46,8 +53,7 @@ def validar_dados(
     ):
         raise DadosInvalidosError("Campos obrigatórios.")
 
-    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
-        raise DadosInvalidosError("E-mail inválido.")
+    validar_email(email)
 
     validar_senha(senha)
 
@@ -129,8 +135,7 @@ def atualizar_conta(
     ):
         raise DadosInvalidosError("Campos obrigatórios.")
 
-    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
-        raise DadosInvalidosError("E-mail inválido.")
+    validar_email(email)
 
     senha_hash = conta.senha_hash
     if senha is not None:
