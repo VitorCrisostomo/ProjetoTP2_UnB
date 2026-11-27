@@ -42,3 +42,19 @@ def test_excluir_conta_confirmada_remove_a_conta(
     with app.app_context():
         total = get_db().execute("SELECT COUNT(*) FROM contas").fetchone()[0]
     assert total == 0
+
+
+def test_excluir_conta_invalida_sessao_e_credenciais(
+    client: FlaskClient,
+    conta_logada: dict[str, str],
+) -> None:
+    """HU03 C3: após excluir, a sessão e as credenciais deixam de valer."""
+    client.delete("/conta", json={"confirmar": True})
+
+    with client.session_transaction() as sessao:
+        assert "conta_id" not in sessao
+    login = client.post(
+        "/login",
+        json={"email": conta_logada["email"], "senha": conta_logada["senha"]},
+    )
+    assert login.status_code == 401
