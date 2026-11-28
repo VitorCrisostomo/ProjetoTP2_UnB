@@ -33,3 +33,14 @@ def test_definir_papel_invalido_e_recusado(
     assert resultado.exit_code != 0
     assert "Papel inválido." in resultado.output
     assert client.get("/conta").get_json()["papel"] == "usuario"
+
+
+def test_definir_papel_de_conta_inexistente_e_recusado(app: Flask) -> None:
+    """O comando informa erro quando não há conta com o e-mail."""
+    runner = app.test_cli_runner()
+    email = "ninguem@teste.com"
+
+    resultado = runner.invoke(args=["definir-papel", email, "moderador"])
+
+    assert resultado.exit_code != 0
+    assert "Conta não encontrada." in resultado.output
