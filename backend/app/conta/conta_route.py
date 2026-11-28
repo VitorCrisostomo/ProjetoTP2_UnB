@@ -138,3 +138,10 @@ def editarconta_autenticada() -> tuple[Response, int]:
         return jsonify({"erro": "E-mail já cadastrado."}), 409
 
     return jsonify(_dados_publicos(atualizada)), 200
+
+
+@conta_bp.put("/contas/<int:conta_id>/restricao")
+def definir_restricao_conta(conta_id: int) -> tuple[Response, int]:
+    """Aplica ou remove a restrição de acesso de uma conta (moderadores)."""
+
+    return nao_autenticado()
