@@ -91,3 +91,19 @@ def test_moderador_remove_restricao_de_conta_restrita(
 
     assert response.status_code == 200
     assert response.get_json() == {"id": conta_alvo, "restrita": False}
+
+
+def test_remover_restricao_de_conta_sem_restricao_retorna_409(
+    conta_alvo: int,
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU14 C4: não há o que remover em uma conta que não está restrita."""
+    moderador = logar_como("moderador")
+
+    response = moderador.put(
+        f"/contas/{conta_alvo}/restricao",
+        json={"restrita": False},
+    )
+
+    assert response.status_code == 409
+    assert response.get_json() == {"erro": "Conta não possui restrição."}
