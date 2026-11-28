@@ -78,3 +78,14 @@ def logar_como(app: Flask) -> Callable[[str], FlaskClient]:
         return cliente
 
     return _logar
+
+
+@pytest.fixture
+def conta_alvo(client: FlaskClient) -> int:
+    """Cadastra uma conta comum e devolve o seu identificador."""
+    resposta = client.post(
+        "/contas",
+        json={"nome": "Conta Alvo", "email": "alvo@teste.com", "senha": "Senha123"},
+    )
+    assert resposta.status_code == 201
+    return int(resposta.get_json()["id"])

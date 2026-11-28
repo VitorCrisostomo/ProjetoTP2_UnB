@@ -47,3 +47,16 @@ def test_restringir_conta_sem_campo_restrita_retorna_400(
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Dados inválidos."}
+
+
+def test_moderador_aplica_restricao_em_conta(
+    conta_alvo: int,
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU14 C7: o moderador marca a conta como restrita."""
+    moderador = logar_como("moderador")
+
+    response = moderador.put(f"/contas/{conta_alvo}/restricao", json={"restrita": True})
+
+    assert response.status_code == 200
+    assert response.get_json() == {"id": conta_alvo, "restrita": True}
