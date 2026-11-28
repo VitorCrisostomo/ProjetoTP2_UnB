@@ -24,6 +24,18 @@ def criar_tabela_contas(conexao: sqlite3.Connection) -> None:
     )
 
 
+def _para_conta(registro: sqlite3.Row) -> Conta:
+    """Converte uma linha da tabela contas em um objeto Conta."""
+
+    return Conta(
+        id=registro["id"],
+        nome=registro["nome"],
+        email=registro["email"],
+        senha_hash=registro["senha_hash"],
+        papel=registro["papel"],
+    )
+
+
 def inserir_conta(
     conexao: sqlite3.Connection,
     nome: str,
@@ -73,13 +85,7 @@ def buscar_conta_por_email(
     if registro is None:
         return None
 
-    return Conta(
-        id=registro["id"],
-        nome=registro["nome"],
-        email=registro["email"],
-        senha_hash=registro["senha_hash"],
-        papel=registro["papel"],
-    )
+    return _para_conta(registro)
 
 
 def remover_conta(conexao: sqlite3.Connection, conta_id: int) -> None:
@@ -100,13 +106,7 @@ def buscar_conta_por_id(conexao: sqlite3.Connection, conta_id: int) -> Conta | N
     if registro is None:
         return None
 
-    return Conta(
-        id=registro["id"],
-        nome=registro["nome"],
-        email=registro["email"],
-        senha_hash=registro["senha_hash"],
-        papel=registro["papel"],
-    )
+    return _para_conta(registro)
 
 
 def alterar_conta(
