@@ -14,3 +14,7 @@ class TipoOcorrencia:
 
 class TipoJaExisteError(Exception):
     """Indica que já existe um tipo de ocorrência com o nome informado."""
+
+
+class TipoNaoEncontradoError(Exception):
+    """Indica que o tipo de ocorrência informado não existe."""

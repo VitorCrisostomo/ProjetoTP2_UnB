@@ -69,3 +69,20 @@ def listar_tipos_ativos(conexao: sqlite3.Connection) -> list[TipoOcorrencia]:
     ).fetchall()
 
     return [_para_tipo(registro) for registro in registros]
+
+
+def buscar_tipo_por_id(
+    conexao: sqlite3.Connection,
+    tipo_id: int,
+) -> TipoOcorrencia | None:
+    """Busca um tipo de ocorrência pelo identificador."""
+
+    registro = conexao.execute(
+        "SELECT id, nome, ativo FROM tipos_ocorrencia WHERE id = ?",
+        (tipo_id,),
+    ).fetchone()
+
+    if registro is None:
+        return None
+
+    return _para_tipo(registro)

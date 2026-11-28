@@ -3,8 +3,13 @@
 import sqlite3
 
 from app.conta.conta_model import DadosInvalidosError
-from app.tipo.tipo_model import TipoJaExisteError, TipoOcorrencia
+from app.tipo.tipo_model import (
+    TipoJaExisteError,
+    TipoNaoEncontradoError,
+    TipoOcorrencia,
+)
 from app.tipo.tipo_repository import (
+    buscar_tipo_por_id,
     buscar_tipo_por_nome,
     inserir_tipo,
     listar_tipos_ativos,
@@ -35,3 +40,17 @@ def listar_tipos(conexao: sqlite3.Connection) -> list[TipoOcorrencia]:
     """Lista os tipos de ocorrência disponíveis para novos registros."""
 
     return listar_tipos_ativos(conexao)
+
+
+def renomear_tipo(
+    conexao: sqlite3.Connection,
+    tipo_id: int,
+    nome: object,
+) -> TipoOcorrencia:
+    """Altera o nome de um tipo de ocorrência existente."""
+
+    tipo = buscar_tipo_por_id(conexao, tipo_id)
+    if tipo is None:
+        raise TipoNaoEncontradoError("Tipo inexistente.")
+
+    return tipo

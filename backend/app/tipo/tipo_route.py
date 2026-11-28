@@ -5,8 +5,12 @@ from flask import Blueprint, Response, jsonify, request
 from app.auth import verificar_acesso
 from app.conta.conta_model import MODERADOR, DadosInvalidosError
 from app.db import get_db
-from app.tipo.tipo_model import TipoJaExisteError, TipoOcorrencia
-from app.tipo.tipo_service import criar_tipo, listar_tipos
+from app.tipo.tipo_model import (
+    TipoJaExisteError,
+    TipoNaoEncontradoError,
+    TipoOcorrencia,
+)
+from app.tipo.tipo_service import criar_tipo, listar_tipos, renomear_tipo
 
 tipo_bp = Blueprint("tipo", __name__)
 
@@ -55,4 +59,12 @@ def renomear_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
     if negado is not None:
         return negado
 
-    return jsonify({}), 200
+    dados = request.get_json(silent=True)
+    nome = dados.get("nome") if isinstance(dados, dict) else None
+
+    try:
+        tipo = renomear_tipo(get_db(), tipo_id, nome)
+    except TipoNaoEncontradoError as erro:
+        return jsonify({"erro": str(erro)}), 404
+
+    return jsonify(_dados_tipo(tipo)), 200
