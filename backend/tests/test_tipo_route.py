@@ -23,3 +23,15 @@ def test_cadastrar_tipo_como_usuario_comum_retorna_403(
 
     assert response.status_code == 403
     assert response.get_json() == {"erro": "Sem permissão."}
+
+
+def test_cadastrar_tipo_com_nome_vazio_retorna_400(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 C3: o nome do tipo é obrigatório."""
+    moderador = logar_como("moderador")
+
+    response = moderador.post("/tipos", json={"nome": "  "})
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Nome inválido."}
