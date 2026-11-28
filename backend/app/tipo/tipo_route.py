@@ -3,7 +3,7 @@
 from flask import Blueprint, Response, jsonify, request
 
 from app.auth import verificar_acesso
-from app.conta.conta_model import MODERADOR, DadosInvalidosError
+from app.conta.conta_model import ADMINISTRADOR, DadosInvalidosError
 from app.db import get_db
 from app.tipo.tipo_model import (
     TipoJaExisteError,
@@ -36,9 +36,9 @@ def _nome_do_corpo() -> object:
 
 @tipo_bp.post("/tipos")
 def cadastrar_tipo() -> tuple[Response, int]:
-    """Cadastra um novo tipo de ocorrência (somente moderadores)."""
+    """Cadastra um novo tipo de ocorrência (somente administradores)."""
 
-    negado = verificar_acesso(MODERADOR)
+    negado = verificar_acesso(ADMINISTRADOR)
     if negado is not None:
         return negado
 
@@ -65,9 +65,9 @@ def listar_tipos_disponiveis() -> tuple[Response, int]:
 
 @tipo_bp.put("/tipos/<int:tipo_id>")
 def renomear_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
-    """Altera o nome de um tipo de ocorrência (somente moderadores)."""
+    """Altera o nome de um tipo de ocorrência (somente administradores)."""
 
-    negado = verificar_acesso(MODERADOR)
+    negado = verificar_acesso(ADMINISTRADOR)
     if negado is not None:
         return negado
 
@@ -87,9 +87,9 @@ def renomear_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
 
 @tipo_bp.post("/tipos/<int:tipo_id>/desativar")
 def desativar_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
-    """Desativa um tipo de ocorrência (somente moderadores)."""
+    """Desativa um tipo de ocorrência (somente administradores)."""
 
-    negado = verificar_acesso(MODERADOR)
+    negado = verificar_acesso(ADMINISTRADOR)
     if negado is not None:
         return negado
 

@@ -3,9 +3,8 @@
 from dataclasses import dataclass
 
 USUARIO = "usuario"
-MODERADOR = "moderador"
 ADMINISTRADOR = "administrador"
-PAPEIS = (USUARIO, MODERADOR, ADMINISTRADOR)
+PAPEIS = (USUARIO, ADMINISTRADOR)
 
 
 @dataclass(frozen=True)

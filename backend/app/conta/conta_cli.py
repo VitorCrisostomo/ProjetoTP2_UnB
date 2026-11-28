@@ -13,7 +13,7 @@ from app.db import get_db
 @click.argument("papel")
 @with_appcontext
 def definir_papel_command(email: str, papel: str) -> None:
-    """Define o papel (usuario, moderador ou administrador) de uma conta."""
+    """Define o papel (usuario ou administrador) de uma conta."""
     try:
         definir_papel(get_db(), email, papel)
     except (DadosInvalidosError, ContaNaoEncontradaError) as erro:

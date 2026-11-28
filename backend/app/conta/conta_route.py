@@ -4,7 +4,7 @@ from flask import Blueprint, Response, jsonify, request, session
 
 from app.auth import conta_autenticada, nao_autenticado, verificar_acesso
 from app.conta.conta_model import (
-    MODERADOR,
+    ADMINISTRADOR,
     Conta,
     ContaNaoEncontradaError,
     DadosInvalidosError,
@@ -146,9 +146,9 @@ def editarconta_autenticada() -> tuple[Response, int]:
 
 @conta_bp.put("/contas/<int:conta_id>/restricao")
 def definir_restricao_conta(conta_id: int) -> tuple[Response, int]:
-    """Aplica ou remove a restrição de acesso de uma conta (moderadores)."""
+    """Aplica ou remove a restrição de acesso de uma conta (administradores)."""
 
-    negado = verificar_acesso(MODERADOR)
+    negado = verificar_acesso(ADMINISTRADOR)
     if negado is not None:
         return negado
 
