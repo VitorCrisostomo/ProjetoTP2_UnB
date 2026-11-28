@@ -27,3 +27,16 @@ def acesso_negado() -> tuple[Response, int]:
     """Resposta padrão para quem está logado, mas não tem o papel exigido."""
 
     return jsonify({"erro": "Sem permissão."}), 403
+
+
+def verificar_acesso(papel: str) -> tuple[Response, int] | None:
+    """Devolve a resposta 401/403 se o acesso for negado, ou None se permitido."""
+
+    conta = conta_autenticada()
+    if conta is None:
+        return nao_autenticado()
+
+    if conta.papel != papel:
+        return acesso_negado()
+
+    return None

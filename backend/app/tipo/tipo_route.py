@@ -2,7 +2,7 @@
 
 from flask import Blueprint, Response, jsonify, request
 
-from app.auth import acesso_negado, conta_autenticada, nao_autenticado
+from app.auth import verificar_acesso
 from app.conta.conta_model import MODERADOR, DadosInvalidosError
 from app.db import get_db
 from app.tipo.tipo_model import TipoJaExisteError, TipoOcorrencia
@@ -21,12 +21,9 @@ def _dados_tipo(tipo: TipoOcorrencia) -> dict[str, object]:
 def cadastrar_tipo() -> tuple[Response, int]:
     """Cadastra um novo tipo de ocorrência (somente moderadores)."""
 
-    conta = conta_autenticada()
-    if conta is None:
-        return nao_autenticado()
-
-    if conta.papel != MODERADOR:
-        return acesso_negado()
+    negado = verificar_acesso(MODERADOR)
+    if negado is not None:
+        return negado
 
     dados = request.get_json(silent=True)
     nome = dados.get("nome") if isinstance(dados, dict) else None
