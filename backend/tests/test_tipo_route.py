@@ -99,3 +99,15 @@ def test_renomear_tipo_como_usuario_comum_retorna_403(
 
     assert response.status_code == 403
     assert response.get_json() == {"erro": "Sem permissão."}
+
+
+def test_renomear_tipo_inexistente_retorna_404(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 (alterar nome) C3: não é possível renomear um tipo que não existe."""
+    moderador = logar_como("moderador")
+
+    response = moderador.put("/tipos/9999", json={"nome": "Novo"})
+
+    assert response.status_code == 404
+    assert response.get_json() == {"erro": "Tipo inexistente."}
