@@ -190,3 +190,17 @@ def test_desativar_tipo_inexistente_retorna_404(
 
     assert response.status_code == 404
     assert response.get_json() == {"erro": "Tipo inexistente."}
+
+
+def test_desativar_tipo_marca_inativo_e_remove_da_lista(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 (desativar) C4: tipo desativado deixa de ser oferecido."""
+    moderador = logar_como("moderador")
+    tipo_id = moderador.post("/tipos", json={"nome": "Buraco"}).get_json()["id"]
+
+    response = moderador.post(f"/tipos/{tipo_id}/desativar")
+
+    assert response.status_code == 200
+    assert response.get_json() == {"id": tipo_id, "nome": "Buraco", "ativo": False}
+    assert moderador.get("/tipos").get_json() == []
