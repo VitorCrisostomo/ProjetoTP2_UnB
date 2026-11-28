@@ -87,3 +87,15 @@ def test_renomear_tipo_sem_login_retorna_401(client: FlaskClient) -> None:
 
     assert response.status_code == 401
     assert response.get_json() == {"erro": "Não autenticado."}
+
+
+def test_renomear_tipo_como_usuario_comum_retorna_403(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 (alterar nome) C2: somente moderador altera tipos."""
+    usuario = logar_como("usuario")
+
+    response = usuario.put("/tipos/1", json={"nome": "Novo"})
+
+    assert response.status_code == 403
+    assert response.get_json() == {"erro": "Sem permissão."}
