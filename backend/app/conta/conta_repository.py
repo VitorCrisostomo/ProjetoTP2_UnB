@@ -2,7 +2,11 @@
 
 import sqlite3
 
-from app.conta.conta_model import Conta, EmailJaCadastradoError
+from app.conta.conta_model import (
+    Conta,
+    ContaNaoEncontradaError,
+    EmailJaCadastradoError,
+)
 
 
 def criar_tabela_contas(conexao: sqlite3.Connection) -> None:
@@ -125,5 +129,11 @@ def alterar_conta(
 def alterar_papel(conexao: sqlite3.Connection, email: str, papel: str) -> None:
     """Atualiza o papel da conta que possui o e-mail informado."""
 
-    conexao.execute("UPDATE contas SET papel = ? WHERE email = ?", (papel, email))
+    cursor = conexao.execute(
+        "UPDATE contas SET papel = ? WHERE email = ?",
+        (papel, email),
+    )
     conexao.commit()
+
+    if cursor.rowcount == 0:
+        raise ContaNaoEncontradaError("Conta não encontrada.")

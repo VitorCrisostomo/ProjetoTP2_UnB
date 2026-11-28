@@ -19,6 +19,10 @@ class Conta:
     papel: str = USUARIO
 
 
+class ContaNaoEncontradaError(Exception):
+    """Indica que a conta procurada não existe."""
+
+
 class EmailJaCadastradoError(Exception):
     """Indica que o e-mail informado já está cadastrado."""
 
