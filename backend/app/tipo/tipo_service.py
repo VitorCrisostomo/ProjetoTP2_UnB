@@ -9,6 +9,7 @@ from app.tipo.tipo_model import (
     TipoOcorrencia,
 )
 from app.tipo.tipo_repository import (
+    alterar_nome_tipo,
     buscar_tipo_por_id,
     buscar_tipo_por_nome,
     inserir_tipo,
@@ -49,8 +50,7 @@ def renomear_tipo(
 ) -> TipoOcorrencia:
     """Altera o nome de um tipo de ocorrência existente."""
 
-    tipo = buscar_tipo_por_id(conexao, tipo_id)
-    if tipo is None:
+    if buscar_tipo_por_id(conexao, tipo_id) is None:
         raise TipoNaoEncontradoError("Tipo inexistente.")
 
     nome_validado = validar_nome_tipo(nome)
@@ -58,4 +58,4 @@ def renomear_tipo(
     if buscar_tipo_por_nome(conexao, nome_validado) is not None:
         raise TipoJaExisteError("Tipo já existe.")
 
-    return tipo
+    return alterar_nome_tipo(conexao, tipo_id, nome_validado)

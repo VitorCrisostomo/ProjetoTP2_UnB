@@ -86,3 +86,22 @@ def buscar_tipo_por_id(
         return None
 
     return _para_tipo(registro)
+
+
+def alterar_nome_tipo(
+    conexao: sqlite3.Connection,
+    tipo_id: int,
+    nome: str,
+) -> TipoOcorrencia:
+    """Altera o nome de um tipo de ocorrência e devolve o registro atualizado."""
+
+    conexao.execute(
+        "UPDATE tipos_ocorrencia SET nome = ? WHERE id = ?",
+        (nome, tipo_id),
+    )
+    conexao.commit()
+
+    tipo = buscar_tipo_por_id(conexao, tipo_id)
+    assert tipo is not None
+
+    return tipo
