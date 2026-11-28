@@ -14,6 +14,7 @@ from app.tipo.tipo_repository import (
     buscar_tipo_por_nome,
     inserir_tipo,
     listar_tipos_ativos,
+    marcar_tipo_inativo,
 )
 
 
@@ -64,8 +65,7 @@ def renomear_tipo(
 def desativar_tipo(conexao: sqlite3.Connection, tipo_id: int) -> TipoOcorrencia:
     """Desativa um tipo de ocorrência existente."""
 
-    tipo = buscar_tipo_por_id(conexao, tipo_id)
-    if tipo is None:
+    if buscar_tipo_por_id(conexao, tipo_id) is None:
         raise TipoNaoEncontradoError("Tipo inexistente.")
 
-    return tipo
+    return marcar_tipo_inativo(conexao, tipo_id)

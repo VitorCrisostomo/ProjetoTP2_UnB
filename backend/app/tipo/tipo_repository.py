@@ -105,3 +105,18 @@ def alterar_nome_tipo(
     assert tipo is not None
 
     return tipo
+
+
+def marcar_tipo_inativo(
+    conexao: sqlite3.Connection,
+    tipo_id: int,
+) -> TipoOcorrencia:
+    """Marca um tipo como inativo e devolve o registro atualizado."""
+
+    conexao.execute("UPDATE tipos_ocorrencia SET ativo = 0 WHERE id = ?", (tipo_id,))
+    conexao.commit()
+
+    tipo = buscar_tipo_por_id(conexao, tipo_id)
+    assert tipo is not None
+
+    return tipo
