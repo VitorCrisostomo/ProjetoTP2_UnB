@@ -65,3 +65,18 @@ def test_editar_conta_devolve_o_papel_da_conta(
 
     assert response.status_code == 200
     assert response.get_json()["papel"] == "moderador"
+
+
+def test_login_devolve_o_papel_da_conta(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """O login informa o papel gravado no banco, não um valor padrão."""
+    moderador = logar_como("moderador")
+
+    response = moderador.post(
+        "/login",
+        json={"email": "moderador@papel.teste.com", "senha": "Senha123"},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["papel"] == "moderador"
