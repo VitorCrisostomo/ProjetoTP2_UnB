@@ -50,3 +50,16 @@ def test_cadastrar_tipo_valido_retorna_201_com_tipo_ativo(
     assert dados["nome"] == "Buraco"
     assert dados["ativo"] is True
     assert isinstance(dados["id"], int)
+
+
+def test_cadastrar_tipo_duplicado_retorna_409(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 C4: não podem existir dois tipos com o mesmo nome."""
+    moderador = logar_como("moderador")
+    moderador.post("/tipos", json={"nome": "Buraco"})
+
+    response = moderador.post("/tipos", json={"nome": "Buraco"})
+
+    assert response.status_code == 409
+    assert response.get_json() == {"erro": "Tipo já existe."}
