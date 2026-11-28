@@ -74,3 +74,20 @@ def test_aplicar_restricao_em_conta_ja_restrita_nao_altera_nada(
 
     assert response.status_code == 200
     assert response.get_json() == {"id": conta_alvo, "restrita": True}
+
+
+def test_moderador_remove_restricao_de_conta_restrita(
+    conta_alvo: int,
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU14 C5: o moderador libera uma conta que estava restrita."""
+    moderador = logar_como("moderador")
+    moderador.put(f"/contas/{conta_alvo}/restricao", json={"restrita": True})
+
+    response = moderador.put(
+        f"/contas/{conta_alvo}/restricao",
+        json={"restrita": False},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json() == {"id": conta_alvo, "restrita": False}
