@@ -9,6 +9,7 @@ from app.conta.conta_model import (
     ContaNaoEncontradaError,
     DadosInvalidosError,
     EmailJaCadastradoError,
+    SemRestricaoError,
 )
 from app.conta.conta_service import (
     atualizar_conta,
@@ -161,5 +162,7 @@ def definir_restricao_conta(conta_id: int) -> tuple[Response, int]:
         conta = definir_restricao(get_db(), conta_id, restrita)
     except ContaNaoEncontradaError as erro:
         return jsonify({"erro": str(erro)}), 404
+    except SemRestricaoError as erro:
+        return jsonify({"erro": str(erro)}), 409
 
     return jsonify({"id": conta.id, "restrita": conta.restrita}), 200

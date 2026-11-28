@@ -24,6 +24,10 @@ class ContaNaoEncontradaError(Exception):
     """Indica que a conta procurada não existe."""
 
 
+class SemRestricaoError(Exception):
+    """Indica que a conta não possui restrição a ser removida."""
+
+
 class EmailJaCadastradoError(Exception):
     """Indica que o e-mail informado já está cadastrado."""
 

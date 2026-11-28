@@ -11,6 +11,7 @@ from app.conta.conta_model import (
     ContaNaoEncontradaError,
     DadosInvalidosError,
     EmailJaCadastradoError,
+    SemRestricaoError,
 )
 from app.conta.conta_repository import (
     alterar_conta,
@@ -33,6 +34,9 @@ def definir_restricao(
     conta = obter_conta(conexao, conta_id)
     if conta is None:
         raise ContaNaoEncontradaError("Conta inexistente.")
+
+    if not restrita and not conta.restrita:
+        raise SemRestricaoError("Conta não possui restrição.")
 
     return alterar_restricao(conexao, conta_id, restrita)
 
