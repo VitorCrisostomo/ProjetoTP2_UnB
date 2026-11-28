@@ -63,3 +63,19 @@ def test_cadastrar_tipo_duplicado_retorna_409(
 
     assert response.status_code == 409
     assert response.get_json() == {"erro": "Tipo já existe."}
+
+
+def test_listar_tipos_devolve_os_tipos_ativos_sem_exigir_login(
+    client: FlaskClient,
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15: qualquer pessoa consulta a lista de tipos disponíveis."""
+    moderador = logar_como("moderador")
+    moderador.post("/tipos", json={"nome": "Buraco"})
+    moderador.post("/tipos", json={"nome": "Alagamento"})
+
+    response = client.get("/tipos")
+
+    assert response.status_code == 200
+    nomes = [tipo["nome"] for tipo in response.get_json()]
+    assert nomes == ["Buraco", "Alagamento"]
