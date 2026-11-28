@@ -1,5 +1,7 @@
 """Testes da restrição de contas por moderadores (HU14)."""
 
+from collections.abc import Callable
+
 from flask.testing import FlaskClient
 
 
@@ -9,3 +11,15 @@ def test_restringir_conta_sem_login_retorna_401(client: FlaskClient) -> None:
 
     assert response.status_code == 401
     assert response.get_json() == {"erro": "Não autenticado."}
+
+
+def test_restringir_conta_como_usuario_comum_retorna_403(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU14 C2: somente moderador restringe contas."""
+    usuario = logar_como("usuario")
+
+    response = usuario.put("/contas/1/restricao", json={"restrita": True})
+
+    assert response.status_code == 403
+    assert response.get_json() == {"erro": "Sem permissão."}
