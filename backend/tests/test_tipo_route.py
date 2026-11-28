@@ -158,3 +158,11 @@ def test_renomear_tipo_valido_atualiza_o_nome(
     }
     nomes = [tipo["nome"] for tipo in client.get("/tipos").get_json()]
     assert nomes == ["Buraco na via"]
+
+
+def test_desativar_tipo_sem_login_retorna_401(client: FlaskClient) -> None:
+    """HU15 (desativar) C1: usuário não autenticado não desativa tipos."""
+    response = client.post("/tipos/1/desativar")
+
+    assert response.status_code == 401
+    assert response.get_json() == {"erro": "Não autenticado."}
