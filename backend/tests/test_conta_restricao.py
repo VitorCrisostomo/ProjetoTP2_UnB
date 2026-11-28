@@ -23,3 +23,15 @@ def test_restringir_conta_como_usuario_comum_retorna_403(
 
     assert response.status_code == 403
     assert response.get_json() == {"erro": "Sem permissão."}
+
+
+def test_restringir_conta_inexistente_retorna_404(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU14 C3: não é possível restringir uma conta que não existe."""
+    moderador = logar_como("moderador")
+
+    response = moderador.put("/contas/9999/restricao", json={"restrita": True})
+
+    assert response.status_code == 404
+    assert response.get_json() == {"erro": "Conta inexistente."}
