@@ -1,8 +1,9 @@
 """Endpoints de gerenciamento das regiões permitidas."""
 
-from flask import Blueprint, Response
+from flask import Blueprint, Response, jsonify
 
-from app.auth import nao_autenticado
+from app.auth import verificar_acesso
+from app.conta.conta_model import ADMINISTRADOR
 
 regiao_bp = Blueprint("regiao", __name__)
 
@@ -11,4 +12,8 @@ regiao_bp = Blueprint("regiao", __name__)
 def cadastrar_regiao() -> tuple[Response, int]:
     """Cadastra uma região em que o registro de ocorrências é permitido."""
 
-    return nao_autenticado()
+    negado = verificar_acesso(ADMINISTRADOR)
+    if negado is not None:
+        return negado
+
+    return jsonify({}), 201
