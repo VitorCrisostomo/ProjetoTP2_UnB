@@ -9,6 +9,7 @@ from flask import Flask
 from app import db
 from app.conta.conta_cli import definir_papel_command
 from app.conta.conta_route import conta_bp
+from app.regiao.regiao_route import regiao_bp
 from app.tipo.tipo_route import tipo_bp
 
 
@@ -22,6 +23,7 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
     db.init_app(app)
     app.register_blueprint(conta_bp)
+    app.register_blueprint(regiao_bp)
     app.register_blueprint(tipo_bp)
     app.cli.add_command(definir_papel_command)
 
