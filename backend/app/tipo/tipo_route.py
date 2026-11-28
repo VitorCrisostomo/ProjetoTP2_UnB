@@ -5,6 +5,7 @@ from flask import Blueprint, Response, jsonify, request
 from app.auth import acesso_negado, conta_autenticada, nao_autenticado
 from app.conta.conta_model import MODERADOR, DadosInvalidosError
 from app.db import get_db
+from app.tipo.tipo_model import TipoJaExisteError
 from app.tipo.tipo_service import criar_tipo
 
 tipo_bp = Blueprint("tipo", __name__)
@@ -28,5 +29,7 @@ def cadastrar_tipo() -> tuple[Response, int]:
         tipo = criar_tipo(get_db(), nome)
     except DadosInvalidosError as erro:
         return jsonify({"erro": str(erro)}), 400
+    except TipoJaExisteError as erro:
+        return jsonify({"erro": str(erro)}), 409
 
     return jsonify({"id": tipo.id, "nome": tipo.nome, "ativo": tipo.ativo}), 201

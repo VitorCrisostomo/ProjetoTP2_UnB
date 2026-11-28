@@ -10,3 +10,7 @@ class TipoOcorrencia:
     id: int
     nome: str
     ativo: bool
+
+
+class TipoJaExisteError(Exception):
+    """Indica que já existe um tipo de ocorrência com o nome informado."""

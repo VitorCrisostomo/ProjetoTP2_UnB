@@ -3,8 +3,8 @@
 import sqlite3
 
 from app.conta.conta_model import DadosInvalidosError
-from app.tipo.tipo_model import TipoOcorrencia
-from app.tipo.tipo_repository import inserir_tipo
+from app.tipo.tipo_model import TipoJaExisteError, TipoOcorrencia
+from app.tipo.tipo_repository import buscar_tipo_por_nome, inserir_tipo
 
 
 def validar_nome_tipo(nome: object) -> str:
@@ -19,4 +19,9 @@ def validar_nome_tipo(nome: object) -> str:
 def criar_tipo(conexao: sqlite3.Connection, nome: object) -> TipoOcorrencia:
     """Valida o nome e cadastra um novo tipo de ocorrência."""
 
-    return inserir_tipo(conexao, validar_nome_tipo(nome))
+    nome_validado = validar_nome_tipo(nome)
+
+    if buscar_tipo_por_nome(conexao, nome_validado) is not None:
+        raise TipoJaExisteError("Tipo já existe.")
+
+    return inserir_tipo(conexao, nome_validado)

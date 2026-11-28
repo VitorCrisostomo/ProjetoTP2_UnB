@@ -32,3 +32,30 @@ def inserir_tipo(conexao: sqlite3.Connection, nome: str) -> TipoOcorrencia:
     assert cursor.lastrowid is not None
 
     return TipoOcorrencia(id=cursor.lastrowid, nome=nome, ativo=True)
+
+
+def _para_tipo(registro: sqlite3.Row) -> TipoOcorrencia:
+    """Converte uma linha da tabela de tipos em um objeto TipoOcorrencia."""
+
+    return TipoOcorrencia(
+        id=registro["id"],
+        nome=registro["nome"],
+        ativo=bool(registro["ativo"]),
+    )
+
+
+def buscar_tipo_por_nome(
+    conexao: sqlite3.Connection,
+    nome: str,
+) -> TipoOcorrencia | None:
+    """Busca um tipo de ocorrência pelo nome."""
+
+    registro = conexao.execute(
+        "SELECT id, nome, ativo FROM tipos_ocorrencia WHERE nome = ?",
+        (nome,),
+    ).fetchone()
+
+    if registro is None:
+        return None
+
+    return _para_tipo(registro)
