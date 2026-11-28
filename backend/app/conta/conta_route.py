@@ -2,6 +2,7 @@
 
 from flask import Blueprint, Response, jsonify, request, session
 
+from app.auth import conta_autenticada, nao_autenticado
 from app.conta.conta_model import (
     Conta,
     DadosInvalidosError,
@@ -12,21 +13,10 @@ from app.conta.conta_service import (
     autenticar_conta,
     cadastrar_conta,
     excluir_conta,
-    obter_conta,
 )
 from app.db import get_db
 
 conta_bp = Blueprint("conta", __name__)
-
-
-def _conta_logada() -> Conta | None:
-    """Devolve a conta da sessão atual, ou None se não houver conta válida."""
-
-    conta_id = session.get("conta_id")
-    if conta_id is None:
-        return None
-
-    return obter_conta(get_db(), conta_id)
 
 
 def _dados_publicos(conta: Conta) -> dict[str, object]:
@@ -38,12 +28,6 @@ def _dados_publicos(conta: Conta) -> dict[str, object]:
         "email": conta.email,
         "papel": conta.papel,
     }
-
-
-def _nao_autenticado() -> tuple[Response, int]:
-    """Resposta padrão para operações que exigem login."""
-
-    return jsonify({"erro": "Não autenticado."}), 401
 
 
 @conta_bp.post("/contas")
@@ -101,12 +85,12 @@ def login() -> tuple[Response, int]:
 
 
 @conta_bp.delete("/conta")
-def excluir_conta_logada() -> tuple[Response, int]:
+def excluirconta_autenticada() -> tuple[Response, int]:
     """Exclui a conta do usuário autenticado após confirmação."""
 
-    conta = _conta_logada()
+    conta = conta_autenticada()
     if conta is None:
-        return _nao_autenticado()
+        return nao_autenticado()
 
     dados = request.get_json(silent=True)
     if isinstance(dados, dict) and dados.get("confirmar") is True:
@@ -121,20 +105,20 @@ def excluir_conta_logada() -> tuple[Response, int]:
 def consultar_conta() -> tuple[Response, int]:
     """Devolve os dados da conta do usuário autenticado."""
 
-    conta = _conta_logada()
+    conta = conta_autenticada()
     if conta is None:
-        return _nao_autenticado()
+        return nao_autenticado()
 
     return jsonify(_dados_publicos(conta)), 200
 
 
 @conta_bp.put("/conta")
-def editar_conta_logada() -> tuple[Response, int]:
+def editarconta_autenticada() -> tuple[Response, int]:
     """Atualiza os dados da conta do usuário autenticado."""
 
-    conta = _conta_logada()
+    conta = conta_autenticada()
     if conta is None:
-        return _nao_autenticado()
+        return nao_autenticado()
 
     dados = request.get_json(silent=True)
     if not isinstance(dados, dict) or dados.get("confirmar") is not True:
