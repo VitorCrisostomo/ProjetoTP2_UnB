@@ -2,7 +2,7 @@
 
 from flask import Blueprint, Response, jsonify, request
 
-from app.auth import verificar_acesso
+from app.auth import nao_autenticado, verificar_acesso
 from app.conta.conta_model import MODERADOR, DadosInvalidosError
 from app.db import get_db
 from app.tipo.tipo_model import TipoJaExisteError, TipoOcorrencia
@@ -45,3 +45,10 @@ def listar_tipos_disponiveis() -> tuple[Response, int]:
     tipos = listar_tipos(get_db())
 
     return jsonify([_dados_tipo(tipo) for tipo in tipos]), 200
+
+
+@tipo_bp.put("/tipos/<int:tipo_id>")
+def renomear_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
+    """Altera o nome de um tipo de ocorrência (somente moderadores)."""
+
+    return nao_autenticado()
