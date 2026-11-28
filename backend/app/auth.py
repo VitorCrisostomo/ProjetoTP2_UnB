@@ -21,3 +21,9 @@ def nao_autenticado() -> tuple[Response, int]:
     """Resposta padrão para operações que exigem login."""
 
     return jsonify({"erro": "Não autenticado."}), 401
+
+
+def acesso_negado() -> tuple[Response, int]:
+    """Resposta padrão para quem está logado, mas não tem o papel exigido."""
+
+    return jsonify({"erro": "Sem permissão."}), 403

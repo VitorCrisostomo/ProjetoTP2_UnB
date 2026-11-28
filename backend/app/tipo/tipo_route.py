@@ -2,7 +2,7 @@
 
 from flask import Blueprint, Response
 
-from app.auth import nao_autenticado
+from app.auth import acesso_negado, conta_autenticada, nao_autenticado
 
 tipo_bp = Blueprint("tipo", __name__)
 
@@ -11,4 +11,7 @@ tipo_bp = Blueprint("tipo", __name__)
 def cadastrar_tipo() -> tuple[Response, int]:
     """Cadastra um novo tipo de ocorrência (somente moderadores)."""
 
-    return nao_autenticado()
+    if conta_autenticada() is None:
+        return nao_autenticado()
+
+    return acesso_negado()
