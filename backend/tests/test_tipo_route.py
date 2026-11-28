@@ -204,3 +204,17 @@ def test_desativar_tipo_marca_inativo_e_remove_da_lista(
     assert response.status_code == 200
     assert response.get_json() == {"id": tipo_id, "nome": "Buraco", "ativo": False}
     assert moderador.get("/tipos").get_json() == []
+
+
+def test_desativar_tipo_ja_desativado_nao_altera_nada(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 (desativar) C5: repetir a desativação não causa erro."""
+    moderador = logar_como("moderador")
+    tipo_id = moderador.post("/tipos", json={"nome": "Buraco"}).get_json()["id"]
+    moderador.post(f"/tipos/{tipo_id}/desativar")
+
+    response = moderador.post(f"/tipos/{tipo_id}/desativar")
+
+    assert response.status_code == 200
+    assert response.get_json() == {"id": tipo_id, "nome": "Buraco", "ativo": False}
