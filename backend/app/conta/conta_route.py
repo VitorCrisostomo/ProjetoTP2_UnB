@@ -151,8 +151,14 @@ def definir_restricao_conta(conta_id: int) -> tuple[Response, int]:
     if negado is not None:
         return negado
 
+    dados = request.get_json(silent=True)
+    restrita = dados.get("restrita") if isinstance(dados, dict) else None
+
+    if not isinstance(restrita, bool):
+        return jsonify({"erro": "Dados inválidos."}), 400
+
     try:
-        definir_restricao(get_db(), conta_id, True)
+        definir_restricao(get_db(), conta_id, restrita)
     except ContaNaoEncontradaError as erro:
         return jsonify({"erro": str(erro)}), 404
 
