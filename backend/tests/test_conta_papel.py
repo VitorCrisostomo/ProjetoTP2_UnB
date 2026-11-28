@@ -1,5 +1,7 @@
 """Testes dos papéis de conta (usuário, moderador, administrador)."""
 
+from collections.abc import Callable
+
 from flask import Flask
 from flask.testing import FlaskClient
 
@@ -44,3 +46,22 @@ def test_definir_papel_de_conta_inexistente_e_recusado(app: Flask) -> None:
 
     assert resultado.exit_code != 0
     assert "Conta não encontrada." in resultado.output
+
+
+def test_editar_conta_devolve_o_papel_da_conta(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """A edição de dados não altera nem esconde o papel da conta."""
+    moderador = logar_como("moderador")
+
+    response = moderador.put(
+        "/conta",
+        json={
+            "nome": "Moderador Novo",
+            "email": "moderador@papel.teste.com",
+            "confirmar": True,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["papel"] == "moderador"

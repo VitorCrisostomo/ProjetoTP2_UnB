@@ -1,5 +1,6 @@
 """Fixtures compartilhadas pelos testes."""
 
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -7,7 +8,8 @@ from flask import Flask
 from flask.testing import FlaskClient
 
 from app import create_app
-from app.db import init_db
+from app.conta.conta_service import definir_papel
+from app.db import get_db, init_db
 
 
 @pytest.fixture
@@ -58,3 +60,21 @@ def conta_logada(
     )
     assert resposta.status_code == 200
     return conta_cadastrada
+
+
+@pytest.fixture
+def logar_como(app: Flask) -> Callable[[str], FlaskClient]:
+    """Devolve uma função que cria um cliente autenticado com o papel pedido."""
+
+    def _logar(papel: str) -> FlaskClient:
+        cliente = app.test_client()
+        email = f"{papel}@papel.teste.com"
+        dados = {"nome": f"Conta {papel}", "email": email, "senha": "Senha123"}
+        assert cliente.post("/contas", json=dados).status_code == 201
+        with app.app_context():
+            definir_papel(get_db(), email, papel)
+        resposta = cliente.post("/login", json={"email": email, "senha": "Senha123"})
+        assert resposta.status_code == 200
+        return cliente
+
+    return _logar
