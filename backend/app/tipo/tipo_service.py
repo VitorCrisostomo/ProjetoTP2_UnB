@@ -53,6 +53,9 @@ def renomear_tipo(
     if tipo is None:
         raise TipoNaoEncontradoError("Tipo inexistente.")
 
-    validar_nome_tipo(nome)
+    nome_validado = validar_nome_tipo(nome)
+
+    if buscar_tipo_por_nome(conexao, nome_validado) is not None:
+        raise TipoJaExisteError("Tipo já existe.")
 
     return tipo

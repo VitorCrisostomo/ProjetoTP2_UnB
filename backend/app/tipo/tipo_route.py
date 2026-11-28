@@ -68,5 +68,7 @@ def renomear_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
         return jsonify({"erro": str(erro)}), 404
     except DadosInvalidosError as erro:
         return jsonify({"erro": str(erro)}), 400
+    except TipoJaExisteError as erro:
+        return jsonify({"erro": str(erro)}), 409
 
     return jsonify(_dados_tipo(tipo)), 200
