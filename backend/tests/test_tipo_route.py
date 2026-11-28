@@ -138,3 +138,23 @@ def test_renomear_tipo_para_nome_existente_retorna_409(
 
     assert response.status_code == 409
     assert response.get_json() == {"erro": "Tipo já existe."}
+
+
+def test_renomear_tipo_valido_atualiza_o_nome(
+    client: FlaskClient,
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 (alterar nome) C6: o novo nome é gravado e passa a ser listado."""
+    moderador = logar_como("moderador")
+    tipo_id = moderador.post("/tipos", json={"nome": "Buraco"}).get_json()["id"]
+
+    response = moderador.put(f"/tipos/{tipo_id}", json={"nome": "Buraco na via"})
+
+    assert response.status_code == 200
+    assert response.get_json() == {
+        "id": tipo_id,
+        "nome": "Buraco na via",
+        "ativo": True,
+    }
+    nomes = [tipo["nome"] for tipo in client.get("/tipos").get_json()]
+    assert nomes == ["Buraco na via"]
