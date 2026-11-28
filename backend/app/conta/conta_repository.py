@@ -123,7 +123,10 @@ def alterar_conta(
     )
     conexao.commit()
 
-    return Conta(id=conta_id, nome=nome, email=email, senha_hash=senha_hash)
+    conta = buscar_conta_por_id(conexao, conta_id)
+    assert conta is not None
+
+    return conta
 
 
 def alterar_papel(conexao: sqlite3.Connection, email: str, papel: str) -> None:
