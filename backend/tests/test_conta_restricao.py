@@ -35,3 +35,15 @@ def test_restringir_conta_inexistente_retorna_404(
 
     assert response.status_code == 404
     assert response.get_json() == {"erro": "Conta inexistente."}
+
+
+def test_restringir_conta_sem_campo_restrita_retorna_400(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """O corpo precisa dizer se a restrição deve ser aplicada ou removida."""
+    moderador = logar_como("moderador")
+
+    response = moderador.put("/contas/1/restricao", json={})
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Dados inválidos."}
