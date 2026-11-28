@@ -10,7 +10,12 @@ from app.tipo.tipo_model import (
     TipoNaoEncontradoError,
     TipoOcorrencia,
 )
-from app.tipo.tipo_service import criar_tipo, listar_tipos, renomear_tipo
+from app.tipo.tipo_service import (
+    criar_tipo,
+    desativar_tipo,
+    listar_tipos,
+    renomear_tipo,
+)
 
 tipo_bp = Blueprint("tipo", __name__)
 
@@ -88,4 +93,9 @@ def desativar_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
     if negado is not None:
         return negado
 
-    return jsonify({}), 200
+    try:
+        tipo = desativar_tipo(get_db(), tipo_id)
+    except TipoNaoEncontradoError as erro:
+        return jsonify({"erro": str(erro)}), 404
+
+    return jsonify(_dados_tipo(tipo)), 200

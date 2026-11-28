@@ -59,3 +59,13 @@ def renomear_tipo(
         raise TipoJaExisteError("Tipo já existe.")
 
     return alterar_nome_tipo(conexao, tipo_id, nome_validado)
+
+
+def desativar_tipo(conexao: sqlite3.Connection, tipo_id: int) -> TipoOcorrencia:
+    """Desativa um tipo de ocorrência existente."""
+
+    tipo = buscar_tipo_por_id(conexao, tipo_id)
+    if tipo is None:
+        raise TipoNaoEncontradoError("Tipo inexistente.")
+
+    return tipo
