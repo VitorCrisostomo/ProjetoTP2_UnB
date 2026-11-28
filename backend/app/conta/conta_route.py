@@ -158,8 +158,8 @@ def definir_restricao_conta(conta_id: int) -> tuple[Response, int]:
         return jsonify({"erro": "Dados inválidos."}), 400
 
     try:
-        definir_restricao(get_db(), conta_id, restrita)
+        conta = definir_restricao(get_db(), conta_id, restrita)
     except ContaNaoEncontradaError as erro:
         return jsonify({"erro": str(erro)}), 404
 
-    return jsonify({}), 200
+    return jsonify({"id": conta.id, "restrita": conta.restrita}), 200

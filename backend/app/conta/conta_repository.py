@@ -18,7 +18,8 @@ def criar_tabela_contas(conexao: sqlite3.Connection) -> None:
             nome TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
             senha_hash TEXT NOT NULL,
-            papel TEXT NOT NULL DEFAULT 'usuario'
+            papel TEXT NOT NULL DEFAULT 'usuario',
+            restrita INTEGER NOT NULL DEFAULT 0
         )
         """
     )
@@ -33,6 +34,7 @@ def _para_conta(registro: sqlite3.Row) -> Conta:
         email=registro["email"],
         senha_hash=registro["senha_hash"],
         papel=registro["papel"],
+        restrita=bool(registro["restrita"]),
     )
 
 
@@ -75,7 +77,7 @@ def buscar_conta_por_email(
 
     registro = conexao.execute(
         """
-        SELECT id, nome, email, senha_hash, papel
+        SELECT id, nome, email, senha_hash, papel, restrita
         FROM contas
         WHERE email = ?
         """,
@@ -99,7 +101,7 @@ def buscar_conta_por_id(conexao: sqlite3.Connection, conta_id: int) -> Conta | N
     """Busca uma conta pelo identificador."""
 
     registro = conexao.execute(
-        "SELECT id, nome, email, senha_hash, papel FROM contas WHERE id = ?",
+        "SELECT id, nome, email, senha_hash, papel, restrita FROM contas WHERE id = ?",
         (conta_id,),
     ).fetchone()
 
@@ -141,3 +143,22 @@ def alterar_papel(conexao: sqlite3.Connection, email: str, papel: str) -> None:
 
     if cursor.rowcount == 0:
         raise ContaNaoEncontradaError("Conta não encontrada.")
+
+
+def alterar_restricao(
+    conexao: sqlite3.Connection,
+    conta_id: int,
+    restrita: bool,
+) -> Conta:
+    """Marca ou desmarca a conta como restrita e devolve o registro atualizado."""
+
+    conexao.execute(
+        "UPDATE contas SET restrita = ? WHERE id = ?",
+        (int(restrita), conta_id),
+    )
+    conexao.commit()
+
+    conta = buscar_conta_por_id(conexao, conta_id)
+    assert conta is not None
+
+    return conta

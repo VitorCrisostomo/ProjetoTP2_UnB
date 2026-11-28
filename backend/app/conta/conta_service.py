@@ -15,6 +15,7 @@ from app.conta.conta_model import (
 from app.conta.conta_repository import (
     alterar_conta,
     alterar_papel,
+    alterar_restricao,
     buscar_conta_por_email,
     buscar_conta_por_id,
     inserir_conta,
@@ -33,7 +34,7 @@ def definir_restricao(
     if conta is None:
         raise ContaNaoEncontradaError("Conta inexistente.")
 
-    return conta
+    return alterar_restricao(conexao, conta_id, restrita)
 
 
 def validar_email(email: str) -> None:

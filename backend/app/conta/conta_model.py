@@ -17,6 +17,7 @@ class Conta:
     email: str
     senha_hash: str
     papel: str = USUARIO
+    restrita: bool = False
 
 
 class ContaNaoEncontradaError(Exception):
