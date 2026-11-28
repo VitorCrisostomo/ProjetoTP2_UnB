@@ -178,3 +178,15 @@ def test_desativar_tipo_como_usuario_comum_retorna_403(
 
     assert response.status_code == 403
     assert response.get_json() == {"erro": "Sem permissão."}
+
+
+def test_desativar_tipo_inexistente_retorna_404(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 (desativar) C3: não é possível desativar um tipo que não existe."""
+    moderador = logar_como("moderador")
+
+    response = moderador.post("/tipos/9999/desativar")
+
+    assert response.status_code == 404
+    assert response.get_json() == {"erro": "Tipo inexistente."}
