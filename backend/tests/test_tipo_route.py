@@ -111,3 +111,16 @@ def test_renomear_tipo_inexistente_retorna_404(
 
     assert response.status_code == 404
     assert response.get_json() == {"erro": "Tipo inexistente."}
+
+
+def test_renomear_tipo_com_nome_vazio_retorna_400(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 (alterar nome) C4: o novo nome não pode ser vazio."""
+    moderador = logar_como("moderador")
+    tipo_id = moderador.post("/tipos", json={"nome": "Buraco"}).get_json()["id"]
+
+    response = moderador.put(f"/tipos/{tipo_id}", json={"nome": ""})
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Nome inválido."}
