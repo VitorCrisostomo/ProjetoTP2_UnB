@@ -79,3 +79,11 @@ def test_listar_tipos_devolve_os_tipos_ativos_sem_exigir_login(
     assert response.status_code == 200
     nomes = [tipo["nome"] for tipo in response.get_json()]
     assert nomes == ["Buraco", "Alagamento"]
+
+
+def test_renomear_tipo_sem_login_retorna_401(client: FlaskClient) -> None:
+    """HU15 (alterar nome) C1: usuário não autenticado não altera tipos."""
+    response = client.put("/tipos/1", json={"nome": "Novo"})
+
+    assert response.status_code == 401
+    assert response.get_json() == {"erro": "Não autenticado."}
