@@ -60,3 +60,17 @@ def test_moderador_aplica_restricao_em_conta(
 
     assert response.status_code == 200
     assert response.get_json() == {"id": conta_alvo, "restrita": True}
+
+
+def test_aplicar_restricao_em_conta_ja_restrita_nao_altera_nada(
+    conta_alvo: int,
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU14 C6: repetir a restrição mantém a conta restrita, sem erro."""
+    moderador = logar_como("moderador")
+    moderador.put(f"/contas/{conta_alvo}/restricao", json={"restrita": True})
+
+    response = moderador.put(f"/contas/{conta_alvo}/restricao", json={"restrita": True})
+
+    assert response.status_code == 200
+    assert response.get_json() == {"id": conta_alvo, "restrita": True}
