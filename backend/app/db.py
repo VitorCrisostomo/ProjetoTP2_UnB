@@ -8,6 +8,7 @@ from flask import Flask, current_app, g
 from flask.cli import with_appcontext
 
 from app.conta.conta_repository import criar_tabela_contas
+from app.tipo.tipo_repository import criar_tabela_tipos
 
 
 def get_db() -> sqlite3.Connection:
@@ -31,6 +32,7 @@ def init_db() -> None:
     """Inicializa o banco de dados sem apagar registros existentes."""
     conexao = get_db()
     criar_tabela_contas(conexao)
+    criar_tabela_tipos(conexao)
     conexao.commit()
 
 
