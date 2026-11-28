@@ -95,3 +95,9 @@ def conta_alvo(client: FlaskClient) -> int:
 def usuario(logar_como: Callable[[str], FlaskClient]) -> FlaskClient:
     """Cliente autenticado como usuário comum."""
     return logar_como("usuario")
+
+
+@pytest.fixture
+def administrador(logar_como: Callable[[str], FlaskClient]) -> FlaskClient:
+    """Cliente autenticado como administrador."""
+    return logar_como("administrador")

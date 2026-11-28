@@ -17,3 +17,13 @@ def test_cadastrar_regiao_como_usuario_comum_retorna_403(usuario: FlaskClient) -
 
     assert response.status_code == 403
     assert response.get_json() == {"erro": "Sem permissão."}
+
+
+def test_cadastrar_regiao_sem_limites_retorna_400(
+    administrador: FlaskClient,
+) -> None:
+    """HU18 C3: a região precisa informar os quatro limites."""
+    response = administrador.post("/regioes", json={"nome": "Plano Piloto"})
+
+    assert response.status_code == 400
+    assert response.get_json() == {"erro": "Região inválida."}
