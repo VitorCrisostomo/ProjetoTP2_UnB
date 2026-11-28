@@ -124,3 +124,17 @@ def test_renomear_tipo_com_nome_vazio_retorna_400(
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Nome inválido."}
+
+
+def test_renomear_tipo_para_nome_existente_retorna_409(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 (alterar nome) C5: o novo nome não pode repetir outro tipo."""
+    moderador = logar_como("moderador")
+    moderador.post("/tipos", json={"nome": "Buraco"})
+    tipo_id = moderador.post("/tipos", json={"nome": "Alagamento"}).get_json()["id"]
+
+    response = moderador.put(f"/tipos/{tipo_id}", json={"nome": "Buraco"})
+
+    assert response.status_code == 409
+    assert response.get_json() == {"erro": "Tipo já existe."}
