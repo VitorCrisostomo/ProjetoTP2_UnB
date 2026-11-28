@@ -35,3 +35,18 @@ def test_cadastrar_tipo_com_nome_vazio_retorna_400(
 
     assert response.status_code == 400
     assert response.get_json() == {"erro": "Nome inválido."}
+
+
+def test_cadastrar_tipo_valido_retorna_201_com_tipo_ativo(
+    logar_como: Callable[[str], FlaskClient],
+) -> None:
+    """HU15 C5: o tipo é criado ativo e devolvido com seu identificador."""
+    moderador = logar_como("moderador")
+
+    response = moderador.post("/tipos", json={"nome": "Buraco"})
+
+    assert response.status_code == 201
+    dados = response.get_json()
+    assert dados["nome"] == "Buraco"
+    assert dados["ativo"] is True
+    assert isinstance(dados["id"], int)
