@@ -59,3 +59,13 @@ def buscar_tipo_por_nome(
         return None
 
     return _para_tipo(registro)
+
+
+def listar_tipos_ativos(conexao: sqlite3.Connection) -> list[TipoOcorrencia]:
+    """Lista os tipos de ocorrência ativos, do mais antigo ao mais recente."""
+
+    registros = conexao.execute(
+        "SELECT id, nome, ativo FROM tipos_ocorrencia WHERE ativo = 1 ORDER BY id"
+    ).fetchall()
+
+    return [_para_tipo(registro) for registro in registros]
