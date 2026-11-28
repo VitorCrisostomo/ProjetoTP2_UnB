@@ -89,3 +89,9 @@ def conta_alvo(client: FlaskClient) -> int:
     )
     assert resposta.status_code == 201
     return int(resposta.get_json()["id"])
+
+
+@pytest.fixture
+def usuario(logar_como: Callable[[str], FlaskClient]) -> FlaskClient:
+    """Cliente autenticado como usuário comum."""
+    return logar_como("usuario")

@@ -9,3 +9,11 @@ def test_cadastrar_regiao_sem_login_retorna_401(client: FlaskClient) -> None:
 
     assert response.status_code == 401
     assert response.get_json() == {"erro": "Não autenticado."}
+
+
+def test_cadastrar_regiao_como_usuario_comum_retorna_403(usuario: FlaskClient) -> None:
+    """HU18 C2: somente administrador define regiões."""
+    response = usuario.post("/regioes", json={"nome": "Plano Piloto"})
+
+    assert response.status_code == 403
+    assert response.get_json() == {"erro": "Sem permissão."}
