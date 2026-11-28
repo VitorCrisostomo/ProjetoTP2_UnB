@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.conta.conta_model import (
     PAPEIS,
     Conta,
+    ContaNaoEncontradaError,
     DadosInvalidosError,
     EmailJaCadastradoError,
 )
@@ -19,6 +20,20 @@ from app.conta.conta_repository import (
     inserir_conta,
     remover_conta,
 )
+
+
+def definir_restricao(
+    conexao: sqlite3.Connection,
+    conta_id: int,
+    restrita: bool,
+) -> Conta:
+    """Aplica (True) ou remove (False) a restrição de acesso de uma conta."""
+
+    conta = obter_conta(conexao, conta_id)
+    if conta is None:
+        raise ContaNaoEncontradaError("Conta inexistente.")
+
+    return conta
 
 
 def validar_email(email: str) -> None:

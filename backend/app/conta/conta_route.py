@@ -6,6 +6,7 @@ from app.auth import conta_autenticada, nao_autenticado, verificar_acesso
 from app.conta.conta_model import (
     MODERADOR,
     Conta,
+    ContaNaoEncontradaError,
     DadosInvalidosError,
     EmailJaCadastradoError,
 )
@@ -13,6 +14,7 @@ from app.conta.conta_service import (
     atualizar_conta,
     autenticar_conta,
     cadastrar_conta,
+    definir_restricao,
     excluir_conta,
 )
 from app.db import get_db
@@ -148,5 +150,10 @@ def definir_restricao_conta(conta_id: int) -> tuple[Response, int]:
     negado = verificar_acesso(MODERADOR)
     if negado is not None:
         return negado
+
+    try:
+        definir_restricao(get_db(), conta_id, True)
+    except ContaNaoEncontradaError as erro:
+        return jsonify({"erro": str(erro)}), 404
 
     return jsonify({}), 200
