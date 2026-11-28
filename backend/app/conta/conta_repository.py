@@ -63,7 +63,7 @@ def buscar_conta_por_email(
 
     registro = conexao.execute(
         """
-        SELECT id, nome, email, senha_hash
+        SELECT id, nome, email, senha_hash, papel
         FROM contas
         WHERE email = ?
         """,
@@ -78,6 +78,7 @@ def buscar_conta_por_email(
         nome=registro["nome"],
         email=registro["email"],
         senha_hash=registro["senha_hash"],
+        papel=registro["papel"],
     )
 
 
