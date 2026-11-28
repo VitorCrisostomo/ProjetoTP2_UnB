@@ -3,6 +3,7 @@
 import click
 from flask.cli import with_appcontext
 
+from app.conta.conta_model import DadosInvalidosError
 from app.conta.conta_service import definir_papel
 from app.db import get_db
 
@@ -13,5 +14,9 @@ from app.db import get_db
 @with_appcontext
 def definir_papel_command(email: str, papel: str) -> None:
     """Define o papel (usuario, moderador ou administrador) de uma conta."""
-    definir_papel(get_db(), email, papel)
+    try:
+        definir_papel(get_db(), email, papel)
+    except DadosInvalidosError as erro:
+        raise click.ClickException(str(erro)) from erro
+
     click.echo("Papel atualizado.")

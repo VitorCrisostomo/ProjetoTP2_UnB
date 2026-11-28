@@ -2,6 +2,11 @@
 
 from dataclasses import dataclass
 
+USUARIO = "usuario"
+MODERADOR = "moderador"
+ADMINISTRADOR = "administrador"
+PAPEIS = (USUARIO, MODERADOR, ADMINISTRADOR)
+
 
 @dataclass(frozen=True)
 class Conta:
@@ -11,7 +16,7 @@ class Conta:
     nome: str
     email: str
     senha_hash: str
-    papel: str = "usuario"
+    papel: str = USUARIO
 
 
 class EmailJaCadastradoError(Exception):
