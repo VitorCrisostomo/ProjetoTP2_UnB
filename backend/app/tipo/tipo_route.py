@@ -21,6 +21,14 @@ def _dados_tipo(tipo: TipoOcorrencia) -> dict[str, object]:
     return {"id": tipo.id, "nome": tipo.nome, "ativo": tipo.ativo}
 
 
+def _nome_do_corpo() -> object:
+    """Lê o campo nome do corpo JSON da requisição (None se ausente)."""
+
+    dados = request.get_json(silent=True)
+
+    return dados.get("nome") if isinstance(dados, dict) else None
+
+
 @tipo_bp.post("/tipos")
 def cadastrar_tipo() -> tuple[Response, int]:
     """Cadastra um novo tipo de ocorrência (somente moderadores)."""
@@ -29,8 +37,7 @@ def cadastrar_tipo() -> tuple[Response, int]:
     if negado is not None:
         return negado
 
-    dados = request.get_json(silent=True)
-    nome = dados.get("nome") if isinstance(dados, dict) else None
+    nome = _nome_do_corpo()
 
     try:
         tipo = criar_tipo(get_db(), nome)
@@ -59,8 +66,7 @@ def renomear_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
     if negado is not None:
         return negado
 
-    dados = request.get_json(silent=True)
-    nome = dados.get("nome") if isinstance(dados, dict) else None
+    nome = _nome_do_corpo()
 
     try:
         tipo = renomear_tipo(get_db(), tipo_id, nome)
