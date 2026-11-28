@@ -2,7 +2,7 @@
 
 from flask import Blueprint, Response, jsonify, request
 
-from app.auth import nao_autenticado, verificar_acesso
+from app.auth import verificar_acesso
 from app.conta.conta_model import MODERADOR, DadosInvalidosError
 from app.db import get_db
 from app.tipo.tipo_model import (
@@ -84,4 +84,8 @@ def renomear_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
 def desativar_tipo_ocorrencia(tipo_id: int) -> tuple[Response, int]:
     """Desativa um tipo de ocorrência (somente moderadores)."""
 
-    return nao_autenticado()
+    negado = verificar_acesso(MODERADOR)
+    if negado is not None:
+        return negado
+
+    return jsonify({}), 200
